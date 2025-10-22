@@ -1,4 +1,5 @@
 from typing import List, Dict
+import argparse
 
 ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
@@ -55,9 +56,14 @@ class Reflector:
     
 
 class Enigma:
-    def __init__(self, rotors: List[Rotor], reflector: Reflector):
+    def __init__(self, rotors: List[Rotor], reflector: Reflector, verbose: bool):
         self.left, self.mid, self.right = rotors
         self.reflector = reflector
+        self.verbose = verbose
+        if self.verbose:
+            print(f"Left Rotor: {self.left.wiring}, stepping at notch {self.left.notch}")
+            print(f"Middle Rotor: {self.mid.wiring}, stepping at notch {self.mid.notch}")
+            print(f"Right Rotor: {self.right.wiring}, stepping at notch {self.right.notch}")
 
     def step_rotors(self):
         # if middle rotor at notch, left and mid rotor step
@@ -76,18 +82,40 @@ class Enigma:
         
         # step before encode
         self.step_rotors()
+
+        if self.verbose:
+            print(f"Input letter: {char.upper()}")
+            print(f"Rotor position: {ALPHABET[self.left.pos]}{ALPHABET[self.mid.pos]}{ALPHABET[self.right.pos]}")
+
         idx = ALPHABET.index(char.upper())
 
         idx = self.right.encode_forward(idx)
+        if self.verbose:
+            print(f"Wheel 3 Encryption: {ALPHABET[idx]}")
         idx = self.mid.encode_forward(idx)
+        if self.verbose:
+            print(f"Wheel 2 Encryption: {ALPHABET[idx]}")
         idx = self.left.encode_forward(idx)
+        if self.verbose:
+            print(f"Wheel 1 Encryption: {ALPHABET[idx]}")
 
         idx = self.reflector.reflect(idx)
+        if self.verbose:
+            print(f"Reflector Encryption: {ALPHABET[idx]}")
 
         idx = self.left.encode_backward(idx)
+        if self.verbose:
+            print(f"Wheel 1 Encryption: {ALPHABET[idx]}")
         idx = self.mid.encode_backward(idx)
+        if self.verbose:
+            print(f"Wheel 2 Encryption: {ALPHABET[idx]}")
         idx = self.right.encode_backward(idx)
+        if self.verbose:
+            print(f"Wheel 3 Encryption: {ALPHABET[idx]}")
 
+        if self.verbose:
+            print(f"Output letter: {ALPHABET[idx]}")
+            print("="*25)
         return ALPHABET[idx]
     
     def encrypt(self, msg: str) -> str:
@@ -103,13 +131,19 @@ ROTOR_3_STEP = "V"
 REFLECTOR = "YRUHQSLDPXNGOKMIEBFZCWVJAT"
 
 if __name__ == '__main__':
+
+    parser = argparse.ArgumentParser(description="Enigma Machine Simulator")
+    parser.add_argument("-v", "--verbose", action="store_true", help="Show rotor mapping as encryption/decryption happens")
+
+    args = parser.parse_args()
+
     left = Rotor(ROTOR_1, ROTOR_1_STEP, ring_setting=0, position='A')
     mid = Rotor(ROTOR_2, ROTOR_2_STEP, ring_setting=0, position='A')
     right = Rotor(ROTOR_3, ROTOR_3_STEP, ring_setting=0, position='A')
 
     reflector = Reflector(REFLECTOR)
 
-    enigma = Enigma([left, mid, right], reflector)
+    enigma = Enigma([left, mid, right], reflector, verbose=args.verbose)
 
     user_input = input("Input text for encrypt/decrypt: ")
     cipher = enigma.encrypt(user_input)
