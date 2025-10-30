@@ -181,10 +181,7 @@ if __name__ == '__main__':
             rotor3 = ROTOR_3
         if not rotor3_notch:
             rotor3_notch = ROTOR_3_STEP
-        
-            
-    
-    
+
     left = Rotor(rotor1, rotor1_notch, ring_setting=0, position=rotor1_sp)
     mid = Rotor(rotor2, rotor2_notch, ring_setting=0, position=rotor2_sp)
     right = Rotor(rotor3, rotor3_notch, ring_setting=0, position=rotor3_sp)
