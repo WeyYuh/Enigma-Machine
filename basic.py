@@ -134,12 +134,60 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description="Enigma Machine Simulator")
     parser.add_argument("-v", "--verbose", action="store_true", help="Show rotor mapping as encryption/decryption happens")
+    parser.add_argument("-c", "--config", action="store_true", help="Change rotors for the enigma machine")
+    parser.add_argument("-sp", "--starting_position", action="store_true", help="Change the starting position for rotors")
 
     args = parser.parse_args()
 
-    left = Rotor(ROTOR_1, ROTOR_1_STEP, ring_setting=0, position='A')
-    mid = Rotor(ROTOR_2, ROTOR_2_STEP, ring_setting=0, position='A')
-    right = Rotor(ROTOR_3, ROTOR_3_STEP, ring_setting=0, position='A')
+    rotor1_sp = 'A'
+    rotor2_sp = 'A'
+    rotor3_sp = 'A'
+    if args.starting_position:
+        rotor1_sp = input("Input left rotor starting position (A-Z) (<Enter> to use default): ")
+        rotor2_sp = input("Input mid rotor starting position (A-Z) (<Enter> to use default): ")
+        rotor3_sp = input("Input right rotor starting position (A-Z) (<Enter> to use default): ")
+
+        if not rotor1_sp:
+            rotor1_sp = 'A'
+        if not rotor2_sp:
+            rotor2_sp = 'A'
+        if not rotor3_sp:
+            rotor3_sp = 'A'
+        
+    rotor1 = ROTOR_1
+    rotor1_notch = ROTOR_1_STEP
+    rotor2 = ROTOR_2
+    rotor2_notch = ROTOR_2_STEP
+    rotor3 = ROTOR_3
+    rotor3_notch = ROTOR_3_STEP
+
+    if args.config:
+        rotor1 = input("Input left rotor (<Enter> to use default): ")
+        rotor1_notch = input("Input notch for left rotor (<Enter> to use default): ")
+        rotor2 = input("Input middle rotor (<Enter> to use default): ")
+        rotor2_notch = input("Input notch for middle rotor (<Enter> to use default): ")
+        rotor3 = input("Input right rotor (<Enter> to use default): ")
+        rotor3_notch = input("Input notch for right rotor (<Enter> to use default): ")
+
+        if not rotor1:
+            rotor1 = ROTOR_1
+        if not rotor1_notch:
+            rotor1_notch = ROTOR_1_STEP
+        if not rotor2:
+            rotor2 = ROTOR_2
+        if not rotor2_notch:
+            rotor2_notch = ROTOR_2_STEP
+        if not rotor3:
+            rotor3 = ROTOR_3
+        if not rotor3_notch:
+            rotor3_notch = ROTOR_3_STEP
+        
+            
+    
+    
+    left = Rotor(rotor1, rotor1_notch, ring_setting=0, position=rotor1_sp)
+    mid = Rotor(rotor2, rotor2_notch, ring_setting=0, position=rotor2_sp)
+    right = Rotor(rotor3, rotor3_notch, ring_setting=0, position=rotor3_sp)
 
     reflector = Reflector(REFLECTOR)
 
