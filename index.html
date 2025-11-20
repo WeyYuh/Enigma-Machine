@@ -133,20 +133,41 @@
     </div>
 
     <script>
+        const url = "http://localhost"
+        const port = 5000
+
         const keys = document.querySelectorAll(".key");
         keys.forEach(key => {
-            key.addEventListener('click', () => {
+            key.addEventListener('click', async () => {
                 const letter = key.textContent;
                 document.getElementById("input").textContent += letter;
+
+                const encrypted = await sendToEnigmaPy(letter);
+                document.getElementById("output").textContent += encrypted;
             });
         });
 
-        document.addEventListener("keydown", function (e) {
+        document.addEventListener("keydown", async function (e) {
             if (e.key.length === 1 && e.key.match(/[a-zA-Z]/)) {
                 const letter = e.key.toUpperCase();
                 document.getElementById("input").textContent += letter;
+
+                const encrypted = await sendToEnigmaPy(letter);
+
+                document.getElementById("output").textContent += encrypted;
             }
         });
+
+        async function sendToEnigmaPy(letter) {
+            const res = await fetch(`${url}:${port}/encrypt`, {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({char: letter})
+            });
+
+            const data = await res.json();
+            return data.cipher;
+        }
     </script>
 </body>
 </html>
