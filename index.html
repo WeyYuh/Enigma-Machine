@@ -256,9 +256,28 @@
         const pairs = document.querySelectorAll(".pair");
         pairs.forEach(pair => {
             pair.addEventListener('click', () => {
+                const existingPair = pairings.find(p => 
+                    p.from === pair.dataset.label || p.to === pair.dataset.label
+                );
+
+                if (existingPair) {
+
+                    const elemA = document.querySelector(`[data-label='${existingPair.from}']`);
+                    const elemB = document.querySelector(`[data-label='${existingPair.to}']`);
+
+                    elemA.style.background = "black";
+                    elemB.style.background = "black";
+
+                    pairings = pairings.filter(p => p !== existingPair);
+                    usedColors = usedColors.filter(c => c !== existingPair.color);
+                    selected = selected.filter(el => el !== elementA && el !== elementB);
+                    sendPlugboardToEnigma();
+                    return;
+                }
+
                 if (selected.includes(pair)) {
                     pair.style.background = "black";
-                    selected = selected.filter(element => element !== pair)
+                    selected = selected.filter(element => element !== pair);
                     return;
                 }
 
