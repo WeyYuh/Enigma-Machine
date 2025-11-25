@@ -168,6 +168,44 @@
             <div class="key">M</div>
             <div class="key">L</div>
         </div>
+
+        <div class="plugboard">
+            <div class="plugboard-row">
+                <div class="pair" data-label="Q"></div>
+                <div class="pair" data-label="W"></div>
+                <div class="pair" data-label="E"></div>
+                <div class="pair" data-label="R"></div>
+                <div class="pair" data-label="T"></div>
+                <div class="pair" data-label="Z"></div>
+                <div class="pair" data-label="U"></div>
+                <div class="pair" data-label="I"></div>
+                <div class="pair" data-label="O"></div>
+            </div>
+
+            <div class="plugboard-row">
+                <div class="pair" data-label="A"></div>
+                <div class="pair" data-label="S"></div>
+                <div class="pair" data-label="D"></div>
+                <div class="pair" data-label="F"></div>
+                <div class="pair" data-label="G"></div>
+                <div class="pair" data-label="H"></div>
+                <div class="pair" data-label="J"></div>
+                <div class="pair" data-label="K"></div>
+            </div>
+
+            <div class="plugboard-row">
+                <div class="pair" data-label="P"></div>
+                <div class="pair" data-label="Y"></div>
+                <div class="pair" data-label="X"></div>
+                <div class="pair" data-label="C"></div>
+                <div class="pair" data-label="V"></div>
+                <div class="pair" data-label="B"></div>
+                <div class="pair" data-label="N"></div>
+                <div class="pair" data-label="M"></div>
+                <div class="pair" data-label="L"></div>
+            </div>
+        </div>
+        
     </div>
 
     <div class="content">
@@ -185,6 +223,76 @@
     <script>
         const url = "http://localhost"
         const port = 5000
+
+        let selected = [];
+        let pairings = [];
+        let usedColors = [];
+
+        function getColor() {
+            let colors = [
+                "#ff0000", "#ff8800", "#fff700", "#55ff00",
+                "#0000ff", "#9900ff", "#ff00ff", "#910101",
+                "#069101", "#018391", "#80003c", "#570080",
+                "#a47aff"
+            ];
+
+            colors = colors.filter(function(el) {
+                return !usedColors.includes(el);
+            });
+
+            return colors[0]
+        }
+
+        let currentColor = getColor();
+        const pairs = document.querySelectorAll(".pair");
+        pairs.forEach(pair => {
+            pair.addEventListener('click', () => {
+                if (selected.includes(pair)) {
+                    pair.style.background = "black";
+                    selected = selected.filter(element => element !== pair)
+                    return;
+                }
+
+                // console.log(selected);
+                selected.push(pair);
+                // console.log(selected);
+
+                pair.style.background = currentColor;
+
+                if (selected.length === 2) {
+                    const [a,b] = selected;
+
+                    const mapping = {
+                        from: a.dataset.label,
+                        to: b.dataset.label,
+                        color: currentColor
+                    };
+                    
+
+                    pairings.push(mapping);
+
+                    sendPlugboardToEnigma();
+                    
+                    selected = [];
+                    usedColors.push(currentColor);
+                    console.log(usedColors);
+                    currentColor = getColor();
+                    console.log(currentColor);
+                }
+            });
+        });
+
+        async function sendPlugboardToEnigma() {
+            try {
+                await fetch(`${url}:${port}/plugboard`, {
+                    method:"POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(pairings)
+                });
+            } catch (e) {
+                console.error("Error sending:", e);
+            }
+        }
 
         const keys = document.querySelectorAll(".key");
         keys.forEach(key => {

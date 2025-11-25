@@ -55,15 +55,31 @@ class Reflector:
         return self.map[char_index] 
     
 
+class Plugboard:
+    def __init__(self, pairings: Dict[str, str]):
+        self.map = {c: c for c in ALPHABET}
+        for a, b in pairings.items():
+            a = a.upper()
+            b = b.upper()
+            if a in ALPHABET and b in ALPHABET and a != b:
+                self.map[a] = b
+                self.map[b] = a
+
+    def swap(self, char: str) -> str:
+        return self.map.get(char.upper(), char.upper())
+    
+
 class Enigma:
-    def __init__(self, rotors: List[Rotor], reflector: Reflector, verbose: bool):
+    def __init__(self, rotors: List[Rotor], reflector: Reflector, plugboard: Plugboard, verbose: bool):
         self.left, self.mid, self.right = rotors
         self.reflector = reflector
+        self.plugboard = plugboard
         self.verbose = verbose
         if self.verbose:
             print(f"Left Rotor: {self.left.wiring}, stepping at notch {self.left.notch}")
             print(f"Middle Rotor: {self.mid.wiring}, stepping at notch {self.mid.notch}")
             print(f"Right Rotor: {self.right.wiring}, stepping at notch {self.right.notch}")
+            print(f"Plugboard pairings: {self.plugboard.map}")
 
     def step_rotors(self):
         # if middle rotor at notch, left and mid rotor step
@@ -90,7 +106,10 @@ class Enigma:
             print(f"Input letter: {char.upper()}")
             print(f"Rotor position: {ALPHABET[self.left.pos]}{ALPHABET[self.mid.pos]}{ALPHABET[self.right.pos]}")
 
-        idx = ALPHABET.index(char.upper())
+        plug_in = self.plugboard.swap(char.upper())
+        idx = ALPHABET.index(plug_in)
+        if self.verbose:
+            print(f"Plugboard in: {plug_in}")
 
         idx = self.right.encode_forward(idx)
         if self.verbose:
@@ -116,10 +135,12 @@ class Enigma:
         if self.verbose:
             print(f"Wheel 3 Encryption: {ALPHABET[idx]}")
 
+        plug_out = self.plugboard.swap(ALPHABET[idx])
         if self.verbose:
-            print(f"Output letter: {ALPHABET[idx]}")
+            print(f"Plugboard out: {plug_out}")
             print("="*25)
-        return ALPHABET[idx]
+
+        return plug_out
     
     def encrypt(self, msg: str) -> str:
         return ''.join(self.encrypt_char(c) for c in msg)
@@ -191,7 +212,9 @@ if __name__ == '__main__':
 
     reflector = Reflector(REFLECTOR)
 
-    enigma = Enigma([left, mid, right], reflector, verbose=args.verbose)
+    plugboard = Plugboard({})
+
+    enigma = Enigma([left, mid, right], reflector, plugboard, verbose=args.verbose)
 
     user_input = input("Input text for encrypt/decrypt: ")
     cipher = enigma.encrypt(user_input)
