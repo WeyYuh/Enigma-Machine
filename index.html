@@ -184,6 +184,67 @@
             rotor3.appendChild(div);
         }
 
+        function rotorPosOverlay() {
+            const overlay = document.createElement("div");
+            overlay.className = "overlay";
+
+            const content = document.createElement("div");
+            content.className = "overlay-content";
+            
+            const rotor1PosSelector = document.createElement("select");
+            for (let letter in letters) {
+                var opt = document.createElement("option");
+                opt.value = letters[letter];
+                opt.innerHTML = letters[letter];
+                rotor1PosSelector.appendChild(opt);
+            }
+            rotor1PosSelector.value = letters[currentIdx1];
+
+            const rotor2PosSelector = document.createElement("select");
+            for (let letter in letters) {
+                var opt = document.createElement("option");
+                opt.value = letters[letter];
+                opt.innerHTML = letters[letter];
+                rotor2PosSelector.appendChild(opt);
+            }
+            rotor2PosSelector.value = letters[currentIdx2];
+
+            const rotor3PosSelector = document.createElement("select");
+            for (let letter in letters) {
+                var opt = document.createElement("option");
+                opt.value = letters[letter];
+                opt.innerHTML = letters[letter];
+                rotor3PosSelector.appendChild(opt);
+            }
+            rotor3PosSelector.value = letters[currentIdx3];
+
+
+            content.appendChild(rotor1PosSelector);
+            content.appendChild(rotor2PosSelector);
+            content.appendChild(rotor3PosSelector); 
+            overlay.appendChild(content);
+            document.body.appendChild(overlay);
+
+            overlay.addEventListener("click", (e) => {
+                if (e.target === overlay) {
+                    setRotorPosition(rotor1, rotor1PosSelector.value);
+                    setRotorPosition(rotor2, rotor2PosSelector.value);
+                    setRotorPosition(rotor3, rotor3PosSelector.value);
+                    overlay.remove();
+                }
+            });
+        }
+
+        rotor1.addEventListener("click", () => {
+            rotorPosOverlay();
+        });
+        rotor2.addEventListener("click", () => {
+            rotorPosOverlay();
+        });
+        rotor3.addEventListener("click", () => {
+            rotorPosOverlay();
+        });
+
         function updateRotor1() {
             const items = rotor1.querySelectorAll(".item");
             for (let i = -1; i <= 1; i++) {
@@ -211,6 +272,7 @@
         updateRotor1();
         updateRotor2();
         updateRotor3();
+
 
         function scrollRotor1(direction) {
             if (isScrolling) return;
