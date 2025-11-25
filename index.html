@@ -220,6 +220,10 @@
         </div>
     </div>
 
+    <div class="content">
+         <button type="button" id="clear-btn">Clear</button> 
+    </div>
+
     <script>
         const url = "http://localhost"
         const port = 5000
@@ -242,6 +246,11 @@
 
             return colors[0]
         }
+
+        document.getElementById("clear-btn").addEventListener("click", () => {
+            document.getElementById("input").textContent = "";
+            document.getElementById("output").textContent = "";
+        });
 
         let currentColor = getColor();
         const pairs = document.querySelectorAll(".pair");
