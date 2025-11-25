@@ -7,9 +7,133 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+
     <div class="keyboard">
         <div class="row">
+            <select id="rotor-1">
+                <option value="a" selected="selected">A</option>
+                <option value="b">B</option>
+                <option value="c">C</option>
+                <option value="d">D</option>
+                <option value="e">E</option>
+                <option value="f">F</option>
+                <option value="g">G</option>
+                <option value="h">H</option>
+                <option value="i">I</option>
+                <option value="j">J</option>
+                <option value="k">K</option>
+                <option value="l">L</option>
+                <option value="m">M</option>
+                <option value="n">N</option>
+                <option value="o">O</option>
+                <option value="p">P</option>
+                <option value="q">Q</option>
+                <option value="r">R</option>
+                <option value="s">S</option>
+                <option value="t">T</option>
+                <option value="u">U</option>
+                <option value="v">V</option>
+                <option value="w">W</option>
+                <option value="x">X</option>
+                <option value="y">Y</option>
+                <option value="z">Z</option>
+            </select>
+            <select id="rotor-2">
+                <option value="a" selected="selected">A</option>
+                <option value="b">B</option>
+                <option value="c">C</option>
+                <option value="d">D</option>
+                <option value="e">E</option>
+                <option value="f">F</option>
+                <option value="g">G</option>
+                <option value="h">H</option>
+                <option value="i">I</option>
+                <option value="j">J</option>
+                <option value="k">K</option>
+                <option value="l">L</option>
+                <option value="m">M</option>
+                <option value="n">N</option>
+                <option value="o">O</option>
+                <option value="p">P</option>
+                <option value="q">Q</option>
+                <option value="r">R</option>
+                <option value="s">S</option>
+                <option value="t">T</option>
+                <option value="u">U</option>
+                <option value="v">V</option>
+                <option value="w">W</option>
+                <option value="x">X</option>
+                <option value="y">Y</option>
+                <option value="z">Z</option>
+            </select>
+            <select id="rotor-3">
+                <option value="a" selected="selected">A</option>
+                <option value="b">B</option>
+                <option value="c">C</option>
+                <option value="d">D</option>
+                <option value="e">E</option>
+                <option value="f">F</option>
+                <option value="g">G</option>
+                <option value="h">H</option>
+                <option value="i">I</option>
+                <option value="j">J</option>
+                <option value="k">K</option>
+                <option value="l">L</option>
+                <option value="m">M</option>
+                <option value="n">N</option>
+                <option value="o">O</option>
+                <option value="p">P</option>
+                <option value="q">Q</option>
+                <option value="r">R</option>
+                <option value="s">S</option>
+                <option value="t">T</option>
+                <option value="u">U</option>
+                <option value="v">V</option>
+                <option value="w">W</option>
+                <option value="x">X</option>
+                <option value="y">Y</option>
+                <option value="z">Z</option>
+            </select>
+        </div>
 
+        <div class="row">
+            <div class="light-dim" id="light-q">Q</div>
+            <div class="light-dim" id="light-w">W</div>
+            <div class="light-dim" id="light-e">E</div>
+            <div class="light-dim" id="light-r">R</div>
+            <div class="light-dim" id="light-t">T</div>
+            <div class="light-dim" id="light-z">Z</div>
+            <div class="light-dim" id="light-u">U</div>
+            <div class="light-dim" id="light-i">I</div>
+            <div class="light-dim" id="light-o">O</div>
+        </div>
+
+        <div class="row">
+
+            <div class="light-dim" id="light-a">A</div>
+            <div class="light-dim" id="light-s">S</div>
+            <div class="light-dim" id="light-d">D</div>
+            <div class="light-dim" id="light-f">F</div>
+            <div class="light-dim" id="light-g">G</div>
+            <div class="light-dim" id="light-h">H</div>
+            <div class="light-dim" id="light-j">J</div>
+            <div class="light-dim" id="light-k">K</div>
+        </div>
+
+        <div class="row">
+            <div class="light-dim" id="light-p">P</div>
+            <div class="light-dim" id="light-y">Y</div>
+            <div class="light-dim" id="light-x">X</div>
+            <div class="light-dim" id="light-c">C</div>
+            <div class="light-dim" id="light-v">V</div>
+            <div class="light-dim" id="light-b">B</div>
+            <div class="light-dim" id="light-n">N</div>
+            <div class="light-dim" id="light-m">M</div>
+            <div class="light-dim" id="light-l">L</div>
+        </div>
+
+        <div class="row">
             <div class="key">Q</div>
             <div class="key">W</div>
             <div class="key">E</div>
@@ -34,7 +158,6 @@
         </div>
 
         <div class="row">
-
             <div class="key">P</div>
             <div class="key">Y</div>
             <div class="key">X</div>
@@ -69,8 +192,16 @@
                 const letter = key.textContent;
                 document.getElementById("input").textContent += letter;
 
-                const encrypted = await sendToEnigmaPy(letter);
+                var rotor1Pos = document.getElementById("rotor-1").value;
+                var rotor2Pos = document.getElementById("rotor-2").value;
+                var rotor3Pos = document.getElementById("rotor-3").value;
+
+                console.log("sending to server with position:"+rotor1Pos+rotor2Pos+rotor3Pos)
+
+                const encrypted = await sendToEnigmaPy(letter, rotor1Pos, rotor2Pos, rotor3Pos);
                 document.getElementById("output").textContent += encrypted;
+
+                lightOnOffAnim(encrypted.toLowerCase());
             });
         });
 
@@ -79,21 +210,43 @@
                 const letter = e.key.toUpperCase();
                 document.getElementById("input").textContent += letter;
 
-                const encrypted = await sendToEnigmaPy(letter);
+                var rotor1Pos = document.getElementById("rotor-1").value;
+                var rotor2Pos = document.getElementById("rotor-2").value;
+                var rotor3Pos = document.getElementById("rotor-3").value;
+
+                const encrypted = await sendToEnigmaPy(letter, rotor1Pos, rotor2Pos, rotor3Pos);
 
                 document.getElementById("output").textContent += encrypted;
+                
+                lightOnOffAnim(encrypted.toLowerCase());
             }
         });
 
-        async function sendToEnigmaPy(letter) {
+        async function sendToEnigmaPy(letter, rotor1Position, rotor2Position, rotor3Position) {
             const res = await fetch(`${url}:${port}/encrypt`, {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({char: letter})
+                body: JSON.stringify({char: letter, rotor1Pos: rotor1Position, rotor2Pos: rotor2Position, rotor3Pos: rotor3Position})
             });
 
             const data = await res.json();
+
+            console.log(data.rotor3Pos)
+            document.getElementById("rotor-1").value = data.rotor1Pos.toLowerCase();
+            document.getElementById("rotor-2").value = data.rotor2Pos.toLowerCase();
+            document.getElementById("rotor-3").value = data.rotor3Pos.toLowerCase();
+
             return data.cipher;
+        }
+
+        async function lightOnOffAnim(letter) {
+            document.getElementById("light-"+letter).classList.add('light-light');
+            document.getElementById("light-"+letter).classList.remove('light-dim');
+
+            await new Promise(resolve => setTimeout(resolve, 300));
+
+            document.getElementById("light-"+letter).classList.remove('light-light');
+            document.getElementById("light-"+letter).classList.add('light-dim');
         }
     </script>
 </body>

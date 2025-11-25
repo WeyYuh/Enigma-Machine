@@ -76,6 +76,9 @@ class Enigma:
             self.mid.step()
         self.right.step()
 
+    def get_rotors_pos(self):
+        return [ALPHABET[self.left.pos], ALPHABET[self.mid.pos], ALPHABET[self.right.pos]]
+
     def encrypt_char(self, char: str) -> str:
         if char.upper() not in ALPHABET:
             return char
