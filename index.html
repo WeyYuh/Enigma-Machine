@@ -260,8 +260,7 @@
                     p.from === pair.dataset.label || p.to === pair.dataset.label
                 );
 
-                if (existingPair) {
-
+                if (existingPair && selected.length !== 1) {
                     const elemA = document.querySelector(`[data-label='${existingPair.from}']`);
                     const elemB = document.querySelector(`[data-label='${existingPair.to}']`);
 
@@ -270,8 +269,11 @@
 
                     pairings = pairings.filter(p => p !== existingPair);
                     usedColors = usedColors.filter(c => c !== existingPair.color);
+                    currentColor = existingPair.color;
                     selected = selected.filter(el => el !== elementA && el !== elementB);
                     sendPlugboardToEnigma();
+                    return;
+                } else if (existingPair && selected.length === 1) {
                     return;
                 }
 
