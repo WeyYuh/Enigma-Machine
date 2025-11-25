@@ -11,90 +11,16 @@
 
     <div class="keyboard">
         <div class="row">
-            <select id="rotor-1">
-                <option value="a" selected="selected">A</option>
-                <option value="b">B</option>
-                <option value="c">C</option>
-                <option value="d">D</option>
-                <option value="e">E</option>
-                <option value="f">F</option>
-                <option value="g">G</option>
-                <option value="h">H</option>
-                <option value="i">I</option>
-                <option value="j">J</option>
-                <option value="k">K</option>
-                <option value="l">L</option>
-                <option value="m">M</option>
-                <option value="n">N</option>
-                <option value="o">O</option>
-                <option value="p">P</option>
-                <option value="q">Q</option>
-                <option value="r">R</option>
-                <option value="s">S</option>
-                <option value="t">T</option>
-                <option value="u">U</option>
-                <option value="v">V</option>
-                <option value="w">W</option>
-                <option value="x">X</option>
-                <option value="y">Y</option>
-                <option value="z">Z</option>
-            </select>
-            <select id="rotor-2">
-                <option value="a" selected="selected">A</option>
-                <option value="b">B</option>
-                <option value="c">C</option>
-                <option value="d">D</option>
-                <option value="e">E</option>
-                <option value="f">F</option>
-                <option value="g">G</option>
-                <option value="h">H</option>
-                <option value="i">I</option>
-                <option value="j">J</option>
-                <option value="k">K</option>
-                <option value="l">L</option>
-                <option value="m">M</option>
-                <option value="n">N</option>
-                <option value="o">O</option>
-                <option value="p">P</option>
-                <option value="q">Q</option>
-                <option value="r">R</option>
-                <option value="s">S</option>
-                <option value="t">T</option>
-                <option value="u">U</option>
-                <option value="v">V</option>
-                <option value="w">W</option>
-                <option value="x">X</option>
-                <option value="y">Y</option>
-                <option value="z">Z</option>
-            </select>
-            <select id="rotor-3">
-                <option value="a" selected="selected">A</option>
-                <option value="b">B</option>
-                <option value="c">C</option>
-                <option value="d">D</option>
-                <option value="e">E</option>
-                <option value="f">F</option>
-                <option value="g">G</option>
-                <option value="h">H</option>
-                <option value="i">I</option>
-                <option value="j">J</option>
-                <option value="k">K</option>
-                <option value="l">L</option>
-                <option value="m">M</option>
-                <option value="n">N</option>
-                <option value="o">O</option>
-                <option value="p">P</option>
-                <option value="q">Q</option>
-                <option value="r">R</option>
-                <option value="s">S</option>
-                <option value="t">T</option>
-                <option value="u">U</option>
-                <option value="v">V</option>
-                <option value="w">W</option>
-                <option value="x">X</option>
-                <option value="y">Y</option>
-                <option value="z">Z</option>
-            </select>
+            <div class="rotor" id="rotor-1">
+                <div class="highlight"></div>
+            </div>
+            <div class="rotor" id="rotor-2">
+                <div class="highlight"></div>
+            </div>
+            <div class="rotor" id="rotor-3">
+                <div class="highlight"></div>
+            </div>
+            
         </div>
 
         <div class="row">
@@ -232,6 +158,169 @@
         let pairings = [];
         let usedColors = [];
 
+        const rotor1 = document.getElementById("rotor-1");
+        const rotor2 = document.getElementById("rotor-2");
+        const rotor3 = document.getElementById("rotor-3");
+        const ITEM_HEIGHT = 40;
+        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+        let currentIdx1 = 0;
+        let currentIdx2 = 0;
+        let currentIdx3 = 0;
+        let isScrolling = false;
+
+        for (let i = -1; i <= 1; i++) {
+            const div = document.createElement("div");
+            div.className = "item";
+            rotor1.appendChild(div);
+        }
+        for (let i = -1; i <= 1; i++) {
+            const div = document.createElement("div");
+            div.className = "item";
+            rotor2.appendChild(div);
+        }
+        for (let i = -1; i <= 1; i++) {
+            const div = document.createElement("div");
+            div.className = "item";
+            rotor3.appendChild(div);
+        }
+
+        function updateRotor1() {
+            const items = rotor1.querySelectorAll(".item");
+            for (let i = -1; i <= 1; i++) {
+                let letterIdx = (currentIdx1 + i + letters.length) % letters.length;
+                items[i+1].textContent = letters[letterIdx];
+            }
+        }
+
+        function updateRotor2() {
+            const items = rotor2.querySelectorAll(".item");
+            for (let i = -1; i <= 1; i++) {
+                let letterIdx = (currentIdx2 + i + letters.length) % letters.length;
+                items[i+1].textContent = letters[letterIdx];
+            }
+        }
+
+        function updateRotor3() {
+            const items = rotor3.querySelectorAll(".item");
+            for (let i = -1; i <= 1; i++) {
+                let letterIdx = (currentIdx3 + i + letters.length) % letters.length;
+                items[i+1].textContent = letters[letterIdx];
+            }
+        }
+
+        updateRotor1();
+        updateRotor2();
+        updateRotor3();
+
+        function scrollRotor1(direction) {
+            if (isScrolling) return;
+            isScrolling = true;
+
+            currentIdx1 = (currentIdx1 + direction + letters.length) % letters.length;
+            updateRotor1();
+
+            const items = rotor1.querySelectorAll(".item");
+            items.forEach(item => {
+                item.style.transition = "transform 0.15s";
+                item.style.transform = `translateY(${-direction * ITEM_HEIGHT}px)`;
+            });
+
+            setTimeout(() => {
+                items.forEach(item => {
+                    item.style.transition = "none";
+                    item.style.transform = "translateY(0)";
+                });
+                isScrolling = false;
+            }, 150);
+        }
+
+        function scrollRotor2(direction) {
+            if (isScrolling) return;
+            isScrolling = true;
+
+            currentIdx2 = (currentIdx2 + direction + letters.length) % letters.length;
+            updateRotor2();
+
+            const items = rotor2.querySelectorAll(".item");
+            items.forEach(item => {
+                item.style.transition = "transform 0.15s";
+                item.style.transform = `translateY(${-direction * ITEM_HEIGHT}px)`;
+            });
+
+            setTimeout(() => {
+                items.forEach(item => {
+                    item.style.transition = "none";
+                    item.style.transform = "translateY(0)";
+                });
+                isScrolling = false;
+            }, 150);
+        }
+
+        function scrollRotor3(direction) {
+            if (isScrolling) return;
+            isScrolling = true;
+
+            currentIdx3 = (currentIdx3 + direction + letters.length) % letters.length;
+            updateRotor3();
+
+            const items = rotor3.querySelectorAll(".item");
+            items.forEach(item => {
+                item.style.transition = "transform 0.15s";
+                item.style.transform = `translateY(${-direction * ITEM_HEIGHT}px)`;
+            });
+
+            setTimeout(() => {
+                items.forEach(item => {
+                    item.style.transition = "none";
+                    item.style.transform = "translateY(0)";
+                });
+                isScrolling = false;
+            }, 150);
+        }
+
+        rotor1.scrollTop = ITEM_HEIGHT * 2;
+        rotor2.scrollTop = ITEM_HEIGHT * 2;
+        rotor3.scrollTop = ITEM_HEIGHT * 2;
+
+        rotor1.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            scrollRotor1(e.deltaY > 0 ? 1 : -1);
+        });
+        rotor2.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            scrollRotor2(e.deltaY > 0 ? 1 : -1);
+        });
+        rotor3.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            scrollRotor3(e.deltaY > 0 ? 1 : -1);
+        });
+
+        function getRotorPosition(rotorIdx) {
+            switch (rotorIdx) {
+                case 1:
+                    return letters[currentIdx1];
+                case 2:
+                    return letters[currentIdx2];
+                case 3:
+                    return letters[currentIdx3];
+            }
+        }
+
+        function setRotorPosition(rotorElement, letter) {
+            const idx = letters.indexOf(letter.toUpperCase());
+
+            if (rotorElement === rotor1) {
+                currentIdx1 = idx;
+                updateRotor1();
+            } else if (rotorElement === rotor2) {
+                currentIdx2 = idx;
+                updateRotor2();
+            } else if (rotorElement === rotor3) {
+                currentIdx3 = idx;
+                updateRotor3();
+            }
+        }
+
         function getColor() {
             let colors = [
                 "#ff0000", "#ff8800", "#fff700", "#55ff00",
@@ -330,9 +419,9 @@
                 const letter = key.textContent;
                 document.getElementById("input").textContent += letter;
 
-                var rotor1Pos = document.getElementById("rotor-1").value;
-                var rotor2Pos = document.getElementById("rotor-2").value;
-                var rotor3Pos = document.getElementById("rotor-3").value;
+                var rotor1Pos = getRotorPosition(1);
+                var rotor2Pos = getRotorPosition(2);
+                var rotor3Pos = getRotorPosition(3);
 
                 console.log("sending to server with position:"+rotor1Pos+rotor2Pos+rotor3Pos)
 
@@ -348,9 +437,9 @@
                 const letter = e.key.toUpperCase();
                 document.getElementById("input").textContent += letter;
 
-                var rotor1Pos = document.getElementById("rotor-1").value;
-                var rotor2Pos = document.getElementById("rotor-2").value;
-                var rotor3Pos = document.getElementById("rotor-3").value;
+                var rotor1Pos = getRotorPosition(1);
+                var rotor2Pos = getRotorPosition(2);
+                var rotor3Pos = getRotorPosition(3);
 
                 const encrypted = await sendToEnigmaPy(letter, rotor1Pos, rotor2Pos, rotor3Pos);
 
@@ -370,10 +459,9 @@
             const data = await res.json();
 
             console.log(data.rotor3Pos)
-            document.getElementById("rotor-1").value = data.rotor1Pos.toLowerCase();
-            document.getElementById("rotor-2").value = data.rotor2Pos.toLowerCase();
-            document.getElementById("rotor-3").value = data.rotor3Pos.toLowerCase();
-
+            setRotorPosition(document.getElementById("rotor-1"), data.rotor1Pos);
+            setRotorPosition(document.getElementById("rotor-2"), data.rotor2Pos);
+            setRotorPosition(document.getElementById("rotor-3"), data.rotor3Pos);
             return data.cipher;
         }
 
