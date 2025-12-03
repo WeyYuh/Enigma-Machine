@@ -37,8 +37,9 @@ def encrypt():
     reflector = Reflector(REFLECTOR)
     machine = Enigma([left, mid, right], reflector, plugboard, verbose=False)
     encrypted = machine.encrypt_char(char)
+    steps = machine.encrypt_steps
     rotorsPos = machine.get_rotors_pos()
-    return jsonify({"cipher": encrypted, "rotor1Pos": rotorsPos[0], "rotor2Pos": rotorsPos[1], "rotor3Pos": rotorsPos[2]})
+    return jsonify({"cipher": encrypted, "rotor1Pos": rotorsPos[0], "rotor2Pos": rotorsPos[1], "rotor3Pos": rotorsPos[2], "steps": steps})
 
 @app.post("/plugboard")
 def plugboard():

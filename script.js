@@ -341,6 +341,18 @@ document.getElementById("clear-btn").addEventListener("click", () => {
     document.getElementById("output").textContent = "";
 });
 
+const stepsBtn = document.getElementById("steps-btn");
+const stepsSection = document.getElementById("steps-section");
+stepsBtn.addEventListener("click", () => {
+    if (stepsBtn.innerText === "Show steps") {
+        stepsBtn.innerText = "Hide steps";
+        stepsSection.style.display = "block";
+    } else {
+        stepsBtn.innerText = "Show steps";
+        stepsSection.style.display = "none";
+    }
+});
+
 let currentColor = getColor();
 const pairs = document.querySelectorAll(".pair");
 pairs.forEach(pair => {
@@ -469,10 +481,17 @@ async function sendToEnigmaPy(letter, rotor1Position, rotor2Position, rotor3Posi
 
     const data = await res.json();
 
-    console.log(data.rotor3Pos)
     setRotorPosition(document.getElementById("rotor-1"), data.rotor1Pos);
     setRotorPosition(document.getElementById("rotor-2"), data.rotor2Pos);
     setRotorPosition(document.getElementById("rotor-3"), data.rotor3Pos);
+
+    const formatted = data.steps.replace(/\n/g, "<br>");
+
+    if (document.getElementById("steps").innerText === "Encryption steps will appear here...") {
+        document.getElementById("steps").innerHTML = formatted;
+    } else {
+        document.getElementById("steps").innerHTML += "<br>" + formatted;
+    }
     return data.cipher;
 }
 
@@ -485,3 +504,4 @@ async function lightOnOffAnim(letter) {
     document.getElementById("light-"+letter).classList.remove('light-light');
     document.getElementById("light-"+letter).classList.add('light-dim');
 }
+

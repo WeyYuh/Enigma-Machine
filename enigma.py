@@ -74,6 +74,7 @@ class Enigma:
         self.left, self.mid, self.right = rotors
         self.reflector = reflector
         self.plugboard = plugboard
+        self.encrypt_steps = ""
         self.verbose = verbose
         if self.verbose:
             print(f"Left Rotor: {self.left.wiring}, stepping at notch {self.left.notch}")
@@ -101,44 +102,63 @@ class Enigma:
         
         # step before encode
         self.step_rotors()
-
+        
         if self.verbose:
             print(f"Input letter: {char.upper()}")
-            print(f"Rotor position: {ALPHABET[self.left.pos]}{ALPHABET[self.mid.pos]}{ALPHABET[self.right.pos]}")
+            print(f"Rotors position: {ALPHABET[self.left.pos]}{ALPHABET[self.mid.pos]}{ALPHABET[self.right.pos]}")
+
+        self.encrypt_steps += f"Input letter: {char.upper()}\n \
+                Rotor position: {ALPHABET[self.left.pos]}{ALPHABET[self.mid.pos]}{ALPHABET[self.right.pos]}\n"
 
         plug_in = self.plugboard.swap(char.upper())
         idx = ALPHABET.index(plug_in)
         if self.verbose:
-            print(f"Plugboard in: {plug_in}")
+            print(f"Plugboard encryption: {plug_in}")
+        self.encrypt_steps += f"Plugboard encryption: {plug_in}\n"
 
         idx = self.right.encode_forward(idx)
         if self.verbose:
             print(f"Wheel 3 Encryption: {ALPHABET[idx]}")
+        self.encrypt_steps += f"Rotor 3 encryption: {ALPHABET[idx]}\n"
+        
         idx = self.mid.encode_forward(idx)
         if self.verbose:
             print(f"Wheel 2 Encryption: {ALPHABET[idx]}")
+        self.encrypt_steps += f"Rotor 2 encryption: {ALPHABET[idx]}\n"
+        
         idx = self.left.encode_forward(idx)
         if self.verbose:
             print(f"Wheel 1 Encryption: {ALPHABET[idx]}")
+        self.encrypt_steps += f"Rotor 1 encryption: {ALPHABET[idx]}\n"
 
         idx = self.reflector.reflect(idx)
         if self.verbose:
             print(f"Reflector Encryption: {ALPHABET[idx]}")
+        self.encrypt_steps += f"Reflector encryption: {ALPHABET[idx]}\n"
 
         idx = self.left.encode_backward(idx)
         if self.verbose:
             print(f"Wheel 1 Encryption: {ALPHABET[idx]}")
+        self.encrypt_steps += f"Rotor 1 encryption: {ALPHABET[idx]}\n"
+
         idx = self.mid.encode_backward(idx)
         if self.verbose:
             print(f"Wheel 2 Encryption: {ALPHABET[idx]}")
+        self.encrypt_steps += f"Rotor 2 encryption: {ALPHABET[idx]}\n"
+
         idx = self.right.encode_backward(idx)
         if self.verbose:
             print(f"Wheel 3 Encryption: {ALPHABET[idx]}")
+        self.encrypt_steps += f"Rotor 3 encryption: {ALPHABET[idx]}\n"
 
         plug_out = self.plugboard.swap(ALPHABET[idx])
         if self.verbose:
             print(f"Plugboard out: {plug_out}")
             print("="*25)
+        
+        self.encrypt_steps += f"Plugboard encryption: {plug_out}\n"
+        self.encrypt_steps += "="*25
+        self.encrypt_steps += "\n"
 
         return plug_out
     
