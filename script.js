@@ -11,6 +11,7 @@ const rotor3 = document.getElementById("rotor-3");
 var ring1 = 0;
 var ring2 = 0;
 var ring3 = 0;
+var steps = "";
 
 const ITEM_HEIGHT = 40;
 const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
@@ -486,6 +487,7 @@ async function sendToEnigmaPy(letter, rotor1Position, rotor2Position, rotor3Posi
     setRotorPosition(document.getElementById("rotor-3"), data.rotor3Pos);
 
     const formatted = data.steps.replace(/\n/g, "<br>");
+    steps = data.steps;
 
     if (document.getElementById("steps").innerText === "Encryption steps will appear here...") {
         document.getElementById("steps").innerHTML = formatted;
@@ -505,3 +507,348 @@ async function lightOnOffAnim(letter) {
     document.getElementById("light-"+letter).classList.add('light-dim');
 }
 
+
+const width = 1200;
+const height = 800;
+
+const svg = d3.select("#viz")
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height)
+            .attr("viewBox", `0 0 ${width} ${height}`);
+
+const components = {
+            keyboard: { x: 0, y: 500, width: 400, height: 225, cols: 13 },
+            plugboard: { x: 0, y: 300, width: 900, height: 175, cols: 13 },
+            rotor3: { x: 200, y: 300, width: 100, height: 100 },
+            rotor2: { x: 400, y: 300, width: 100, height: 100 },
+            rotor1: { x: 600, y: 300, width: 100, height: 100 },
+            reflector: { x: 800, y: 300, width: 100, height: 100 },
+            lampboard: { x: 500, y: 500, width: 400, height: 225, cols: 13 }
+        };
+
+const kb = components.keyboard;
+const keySize = 35;
+const spacing = 5;
+
+const keyboardWidth = kb.width;
+const keyboardHeight = kb.height;
+
+const keyboardSection = svg.append("g")
+    .attr("class", "keyboard-section")
+    .attr("transform", "translate("+ kb.x+", "+kb.y +")");
+
+// Add rectangle box around the keyboard
+keyboardSection.append("rect")
+    .attr("class", "section-box")
+    .attr("width", keyboardWidth)
+    .attr("height", keyboardHeight)
+    .attr("fill", "#f5f5f5")
+    .attr("stroke", "#4cc9f0")
+    .attr("stroke-width", 2)
+    .attr("rx", 10)
+    .attr("ry", 10);
+
+keyboardSection.append("text")
+    .attr("class", "section-title")
+    .attr("x", keyboardWidth/2) // Center of the rectangle (500/2)
+    .attr("y", 25)
+    .attr("text-anchor", "middle")
+    .attr("font-size", "18px")
+    .attr("font-weight", "bold")
+    .attr("fill", "#333")
+    .text("Keyboard");
+
+const keyboardGroup = keyboardSection.append("g")
+                .attr("class", "keyboard-group");
+
+const row1Letters = "QWERTZUIO".split("");
+const row2Letters = "ASDFGHJK".split("");
+const row3Letters = "PYXCVBNML".split("");
+
+row1Letters.forEach((letter, i) => {
+    const row = 1;
+    const col = i % kb.cols
+
+    const x = col * (keySize+spacing) + 20;
+    const y = row * (keySize+spacing) + 45;
+
+    const key = keyboardGroup.append("g")
+                    .attr("class", "key-node")
+                    .attr("id", `key-${letter}`)
+                    .attr("transform", `translate(${x}, ${y})`);
+
+    key.append("rect")
+                    .attr("width", keySize)
+                    .attr("height", keySize)
+                    .attr("rx", 5)
+                    .attr("ry", 5)
+                    .attr("fill", "#4361ee")
+                    .attr("stroke", "#4cc9f0")
+                    .attr("stroke-width", 2);
+                
+    // Key letter
+    key.append("text")
+        .attr("x", keySize/2)
+        .attr("y", keySize/2 + 5)
+        .attr("text-anchor", "middle")
+        .attr("fill", "white")
+        .attr("font-weight", "bold")
+        .attr("font-size", "16px")
+        .text(letter);
+});
+
+row2Letters.forEach((letter, i) => {
+    const row = 2;
+    const col = i % kb.cols
+
+    const x = col * (keySize+spacing) + 40;
+    const y = row * (keySize+spacing) + 45;
+
+    const key = keyboardGroup.append("g")
+                    .attr("class", "key-node")
+                    .attr("id", `key-${letter}`)
+                    .attr("transform", `translate(${x}, ${y})`);
+
+    key.append("rect")
+                    .attr("width", keySize)
+                    .attr("height", keySize)
+                    .attr("rx", 5)
+                    .attr("ry", 5)
+                    .attr("fill", "#4361ee")
+                    .attr("stroke", "#4cc9f0")
+                    .attr("stroke-width", 2);
+                
+    // Key letter
+    key.append("text")
+        .attr("x", keySize/2)
+        .attr("y", keySize/2 + 5)
+        .attr("text-anchor", "middle")
+        .attr("fill", "white")
+        .attr("font-weight", "bold")
+        .attr("font-size", "16px")
+        .text(letter);
+});
+
+row3Letters.forEach((letter, i) => {
+    const row = 3;
+    const col = i % kb.cols
+
+    const x = col * (keySize+spacing) + 20;
+    const y = row * (keySize+spacing) + 45;
+
+    const key = keyboardGroup.append("g")
+                    .attr("class", "key-node")
+                    .attr("id", `key-${letter}`)
+                    .attr("transform", `translate(${x}, ${y})`);
+
+    key.append("rect")
+                    .attr("width", keySize)
+                    .attr("height", keySize)
+                    .attr("rx", 5)
+                    .attr("ry", 5)
+                    .attr("fill", "#4361ee")
+                    .attr("stroke", "#4cc9f0")
+                    .attr("stroke-width", 2);
+                
+    // Key letter
+    key.append("text")
+        .attr("x", keySize/2)
+        .attr("y", keySize/2 + 5)
+        .attr("text-anchor", "middle")
+        .attr("fill", "white")
+        .attr("font-weight", "bold")
+        .attr("font-size", "16px")
+        .text(letter);
+});
+
+const lampboard = components.lampboard;
+const lampboardWidth = lampboard.width;
+const lampboardHeight = lampboard.height;
+
+const lampboardSection = svg.append("g")
+    .attr("class", "lampboard-section")
+    .attr("transform", "translate("+ lampboard.x+", "+ lampboard.y +")");
+
+lampboardSection.append("rect")
+    .attr("class", "section-box")
+    .attr("width", lampboardWidth)
+    .attr("height", lampboardHeight)
+    .attr("fill", "#f5f5f5")
+    .attr("stroke", "#f04c4cff")
+    .attr("stroke-width", 2)
+    .attr("rx", 10)
+    .attr("ry", 10);
+
+lampboardSection.append("text")
+    .attr("class", "section-title")
+    .attr("x", lampboardWidth/2) // Center of the rectangle (500/2)
+    .attr("y", 25)
+    .attr("text-anchor", "middle")
+    .attr("font-size", "18px")
+    .attr("font-weight", "bold")
+    .attr("fill", "#333")
+    .text("Lampboard");
+
+const lampboardGroup = lampboardSection.append("g")
+                .attr("class", "lampboard-group");
+
+row1Letters.forEach((letter, i) => {
+    const row = 1;
+    const col = i % kb.cols
+
+    const x = col * (keySize+spacing) + 20;
+    const y = row * (keySize+spacing) + 45;
+
+    const key = lampboardGroup.append("g")
+                    .attr("class", "key-node")
+                    .attr("id", `key-${letter}`)
+                    .attr("transform", `translate(${x}, ${y})`);
+
+    key.append("rect")
+                    .attr("width", keySize)
+                    .attr("height", keySize)
+                    .attr("rx", 5)
+                    .attr("ry", 5)
+                    .attr("fill", "#4361ee")
+                    .attr("stroke", "#4cc9f0")
+                    .attr("stroke-width", 2);
+                
+    // Key letter
+    key.append("text")
+        .attr("x", keySize/2)
+        .attr("y", keySize/2 + 5)
+        .attr("text-anchor", "middle")
+        .attr("fill", "white")
+        .attr("font-weight", "bold")
+        .attr("font-size", "16px")
+        .text(letter);
+});
+
+row2Letters.forEach((letter, i) => {
+    const row = 2;
+    const col = i % kb.cols
+
+    const x = col * (keySize+spacing) + 40;
+    const y = row * (keySize+spacing) + 45;
+
+    const key = lampboardGroup.append("g")
+                    .attr("class", "key-node")
+                    .attr("id", `key-${letter}`)
+                    .attr("transform", `translate(${x}, ${y})`);
+
+    key.append("rect")
+                    .attr("width", keySize)
+                    .attr("height", keySize)
+                    .attr("rx", 5)
+                    .attr("ry", 5)
+                    .attr("fill", "#4361ee")
+                    .attr("stroke", "#4cc9f0")
+                    .attr("stroke-width", 2);
+                
+    // Key letter
+    key.append("text")
+        .attr("x", keySize/2)
+        .attr("y", keySize/2 + 5)
+        .attr("text-anchor", "middle")
+        .attr("fill", "white")
+        .attr("font-weight", "bold")
+        .attr("font-size", "16px")
+        .text(letter);
+});
+
+row3Letters.forEach((letter, i) => {
+    const row = 3;
+    const col = i % kb.cols
+
+    const x = col * (keySize+spacing) + 20;
+    const y = row * (keySize+spacing) + 45;
+
+    const lamp = lampboardGroup.append("g")
+                    .attr("class", "key-node")
+                    .attr("id", `key-${letter}`)
+                    .attr("transform", `translate(${x}, ${y})`);
+
+    lamp.append("rect")
+                    .attr("width", keySize)
+                    .attr("height", keySize)
+                    .attr("rx", 5)
+                    .attr("ry", 5)
+                    .attr("fill", "#4361ee")
+                    .attr("stroke", "#4cc9f0")
+                    .attr("stroke-width", 2);
+                
+    // Key letter
+    lamp.append("text")
+        .attr("x", keySize/2)
+        .attr("y", keySize/2 + 5)
+        .attr("text-anchor", "middle")
+        .attr("fill", "white")
+        .attr("font-weight", "bold")
+        .attr("font-size", "16px")
+        .text(letter);
+});
+
+const plugboard = components.plugboard;
+const plugboardSection = svg.append("g")
+    .attr("class", "plugboard-section")
+    .attr("transform", "translate("+ plugboard.x+", "+ plugboard.y +")");
+
+plugboardSection.append("rect")
+    .attr("class", "section-box")
+    .attr("width", plugboard.width)
+    .attr("height", plugboard.height)
+    .attr("fill", "#f5f5f5")
+    .attr("stroke", "#4cf052ff")
+    .attr("stroke-width", 2)
+    .attr("rx", 10)
+    .attr("ry", 10);
+
+plugboardSection.append("text")
+    .attr("class", "section-title")
+    .attr("x", plugboard.width/2) // Center of the rectangle (500/2)
+    .attr("y", 25)
+    .attr("text-anchor", "middle")
+    .attr("font-size", "18px")
+    .attr("font-weight", "bold")
+    .attr("fill", "#333")
+    .text("Plugboard");
+
+const plugboardGroup = plugboardSection.append("g")
+                .attr("class", "plugboard-group");
+
+letters.forEach((letter, i) => {
+    const x = i * (keySize-2)+20;
+    const y = 1 * (keySize+spacing);
+    const pbLetter = plugboardGroup.append("g")
+                    .attr("class", "key-node")
+                    .attr("id", `key-${letter}`)
+                    .attr("transform", `translate(${x}, ${y})`);
+
+    pbLetter.append("text")
+        .attr("x", keySize/2)
+        .attr("y", keySize/2 + 5)
+        .attr("text-anchor", "middle")
+        .attr("fill", "black")
+        .attr("font-weight", "bold")
+        .attr("font-size", "16px")
+        .text(letter);
+});
+
+letters.forEach((letter, i) => {
+    const x = i * (keySize-2)+20;
+    const y = 2 * (keySize+spacing) + 45;
+    const pbLetter = plugboardGroup.append("g")
+                    .attr("class", "key-node")
+                    .attr("id", `key-${letter}`)
+                    .attr("transform", `translate(${x}, ${y})`);
+
+    pbLetter.append("text")
+        .attr("x", keySize/2)
+        .attr("y", keySize/2 + 5)
+        .attr("text-anchor", "middle")
+        .attr("fill", "black")
+        .attr("font-weight", "bold")
+        .attr("font-size", "16px")
+        .text(letter);
+});
