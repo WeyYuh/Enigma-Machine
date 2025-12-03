@@ -21,13 +21,16 @@ def encrypt():
     
     data = request.get_json()
     char = data["char"]
+    ring1 = data['ring1']
+    ring2 = data['ring2']
+    ring3 = data['ring3']
     rotor1Pos = data["rotor1Pos"]
     rotor2Pos = data["rotor2Pos"]
     rotor3Pos = data["rotor3Pos"]
 
-    left = Rotor(ROTOR_1, ROTOR_1_STEP, position=rotor1Pos)
-    mid = Rotor(ROTOR_2, ROTOR_2_STEP, position=rotor2Pos)
-    right = Rotor(ROTOR_3, ROTOR_3_STEP, position=rotor3Pos)
+    left = Rotor(ROTOR_1, ROTOR_1_STEP, ring_setting=ring1, position=rotor1Pos)
+    mid = Rotor(ROTOR_2, ROTOR_2_STEP, ring_setting=ring2, position=rotor2Pos)
+    right = Rotor(ROTOR_3, ROTOR_3_STEP, ring_setting=ring3, position=rotor3Pos)
 
     plugboard = Plugboard(PLUGBOARD_MAPPING)
 

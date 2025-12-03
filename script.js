@@ -8,6 +8,10 @@ let usedColors = [];
 const rotor1 = document.getElementById("rotor-1");
 const rotor2 = document.getElementById("rotor-2");
 const rotor3 = document.getElementById("rotor-3");
+var ring1 = 0;
+var ring2 = 0;
+var ring3 = 0;
+
 const ITEM_HEIGHT = 40;
 const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 let currentIdx1 = 0;
@@ -35,9 +39,80 @@ function rotorPosOverlay() {
     const overlay = document.createElement("div");
     overlay.className = "overlay";
 
-    const content = document.createElement("div");
+    const content = document.createElement("table");
     content.className = "overlay-content";
+
+    const header = document.createElement("tr");
+
+    const headerDesc = document.createElement("th");
+    headerDesc.innerText = "Setting";
+    headerDesc.className = "table-header";
+
+    const headerRotor1 = document.createElement("th");
+    headerRotor1.innerText = "Rotor 1";
+    headerRotor1.className = "table-header";
+
+    const headerRotor2 = document.createElement("th");
+    headerRotor2.innerText = "Rotor 2";
+    headerRotor2.className = "table-header";
+
+    const headerRotor3 = document.createElement("th");
+    headerRotor3.innerText = "Rotor 3";
+    headerRotor3.className = "table-header";
+
+    header.appendChild(headerDesc);
+    header.appendChild(headerRotor1);
+    header.appendChild(headerRotor2);
+    header.appendChild(headerRotor3);
+    content.appendChild(header);
+
+    const ringSetting = document.createElement("tr");
+    ringSetting.className = "ring-setting-section";
+
+    const ringSettingDesc = document.createElement("td");
+    ringSettingDesc.innerText = "Ring Setting:";
+
+    const rotor1RingCell = document.createElement("td");
+    const rotor1RingSelector = document.createElement("select");
+    rotor1RingSelector.id = "ring1";
+    for (let letter in letters) {
+        var opt = document.createElement("option");
+        opt.value = letters[letter];
+        opt.innerHTML = letters[letter];
+        rotor1RingSelector.appendChild(opt);
+    }
+    rotor1RingSelector.value = letters[ring1];
+    rotor1RingCell.appendChild(rotor1RingSelector);
+
+    const rotor2RingCell = document.createElement("td");
+    const rotor2RingSelector = document.createElement("select");
+    for (let letter in letters) {
+        var opt = document.createElement("option");
+        opt.value = letters[letter];
+        opt.innerHTML = letters[letter];
+        rotor2RingSelector.appendChild(opt);
+    }
+    rotor2RingSelector.value = letters[ring2];
+    rotor2RingCell.appendChild(rotor2RingSelector);
+
+    const rotor3RingCell = document.createElement("td");
+    const rotor3RingSelector = document.createElement("select");
+    for (let letter in letters) {
+        var opt = document.createElement("option");
+        opt.value = letters[letter];
+        opt.innerHTML = letters[letter];
+        rotor3RingSelector.appendChild(opt);
+    }
+    rotor3RingSelector.value = letters[ring3];
+    rotor3RingCell.appendChild(rotor3RingSelector);
+
+    const rotorPos = document.createElement("tr");
+    rotorPos.className = "rotor-pos-section";
     
+    const rotorPosDesc = document.createElement("td");
+    rotorPosDesc.innerText = "Rotor Positions:";
+    
+    const rotor1PosCell = document.createElement("td");
     const rotor1PosSelector = document.createElement("select");
     for (let letter in letters) {
         var opt = document.createElement("option");
@@ -46,7 +121,9 @@ function rotorPosOverlay() {
         rotor1PosSelector.appendChild(opt);
     }
     rotor1PosSelector.value = letters[currentIdx1];
+    rotor1PosCell.appendChild(rotor1PosSelector);
 
+    const rotor2PosCell = document.createElement("td");
     const rotor2PosSelector = document.createElement("select");
     for (let letter in letters) {
         var opt = document.createElement("option");
@@ -55,7 +132,9 @@ function rotorPosOverlay() {
         rotor2PosSelector.appendChild(opt);
     }
     rotor2PosSelector.value = letters[currentIdx2];
+    rotor2PosCell.appendChild(rotor2PosSelector);
 
+    const rotor3PosCell = document.createElement("td");
     const rotor3PosSelector = document.createElement("select");
     for (let letter in letters) {
         var opt = document.createElement("option");
@@ -64,16 +143,28 @@ function rotorPosOverlay() {
         rotor3PosSelector.appendChild(opt);
     }
     rotor3PosSelector.value = letters[currentIdx3];
+    rotor3PosCell.appendChild(rotor3PosSelector);
 
+    ringSetting.appendChild(ringSettingDesc);
+    ringSetting.appendChild(rotor1RingCell);
+    ringSetting.appendChild(rotor2RingCell);
+    ringSetting.appendChild(rotor3RingCell);
 
-    content.appendChild(rotor1PosSelector);
-    content.appendChild(rotor2PosSelector);
-    content.appendChild(rotor3PosSelector); 
+    rotorPos.appendChild(rotorPosDesc);
+    rotorPos.appendChild(rotor1PosCell);
+    rotorPos.appendChild(rotor2PosCell);
+    rotorPos.appendChild(rotor3PosCell);
+
+    content.appendChild(ringSetting)
+    content.appendChild(rotorPos); 
     overlay.appendChild(content);
     document.body.appendChild(overlay);
 
     overlay.addEventListener("click", (e) => {
         if (e.target === overlay) {
+            ring1 = letters.indexOf(rotor1RingSelector.value);
+            ring2 = letters.indexOf(rotor2RingSelector.value);
+            ring3 = letters.indexOf(rotor3RingSelector.value);
             setRotorPosition(rotor1, rotor1PosSelector.value);
             setRotorPosition(rotor2, rotor2PosSelector.value);
             setRotorPosition(rotor3, rotor3PosSelector.value);
@@ -328,6 +419,10 @@ keys.forEach(key => {
         const letter = key.textContent;
         document.getElementById("input").textContent += letter;
 
+        console.log(ring1);
+        console.log(ring2);
+        console.log(ring3);
+
         var rotor1Pos = getRotorPosition(1);
         var rotor2Pos = getRotorPosition(2);
         var rotor3Pos = getRotorPosition(3);
@@ -362,7 +457,14 @@ async function sendToEnigmaPy(letter, rotor1Position, rotor2Position, rotor3Posi
     const res = await fetch(`${url}:${port}/encrypt`, {
         method: "POST",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({char: letter, rotor1Pos: rotor1Position, rotor2Pos: rotor2Position, rotor3Pos: rotor3Position})
+        body: JSON.stringify({
+            char: letter, 
+            ring1: ring1,
+            ring2: ring2,
+            ring3: ring3,
+            rotor1Pos: rotor1Position, 
+            rotor2Pos: rotor2Position,
+            rotor3Pos: rotor3Position})
     });
 
     const data = await res.json();

@@ -23,7 +23,7 @@
     font-size: 24px;
     font-family: monospace;
     border-radius: 5px;
-    cursor: pointer;
+    cursor: default;
     user-select: none;
     transition: 0.1s;
 }
@@ -35,7 +35,7 @@
     font-size: 24px;
     font-family: monospace;
     border-radius: 5px;
-    cursor: pointer;
+    cursor: default;
     user-select: none;
     transition: 0.1s;
 }
@@ -83,6 +83,7 @@
     color: white;
     font-weight: bold;
     font-size: 1.2em;
+    cursor: pointer;
 }
 
 .pair::before {
