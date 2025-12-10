@@ -200,3 +200,8 @@
     min-width: 200px;
     text-align: center;
 }
+
+#viz {
+    width: fit-content;
+  height: fit-content;
+}

@@ -12,6 +12,7 @@ var ring1 = 0;
 var ring2 = 0;
 var ring3 = 0;
 var steps = "";
+var count = 1;
 
 const ITEM_HEIGHT = 40;
 const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
@@ -35,6 +36,8 @@ for (let i = -1; i <= 1; i++) {
     div.className = "item";
     rotor3.appendChild(div);
 }
+
+sendPlugboardToEnigma();
 
 function rotorPosOverlay() {
     const overlay = document.createElement("div");
@@ -488,13 +491,129 @@ async function sendToEnigmaPy(letter, rotor1Position, rotor2Position, rotor3Posi
 
     const formatted = data.steps.replace(/\n/g, "<br>");
     steps = data.steps;
-
+    
     if (document.getElementById("steps").innerText === "Encryption steps will appear here...") {
-        document.getElementById("steps").innerHTML = formatted;
-    } else {
-        document.getElementById("steps").innerHTML += "<br>" + formatted;
+        document.getElementById("steps").innerText = "";
     }
+
+    let stepDetails = document.createElement("div");
+    stepDetails.id = "step-"+count+"-section";
+    
+    let stepText = document.createElement("p");
+    stepText.id = "step-"+count+"-text";
+    stepText.innerHTML = count + ".<br>" + formatted;
+    
+    let stepButton = document.createElement("button");
+    stepButton.id = "step-"+count+"-button";
+    stepButton.innerHTML = "Show encryption path";
+
+    stepButton.addEventListener("click", () => {
+        console.log("step "+stepButton.id+" clicked");
+        startAnimation(steps);
+    });
+    
+    stepDetails.append(stepText);
+    stepDetails.append(stepButton);
+    document.getElementById("steps-section").append(stepDetails);
+
+    count++; 
     return data.cipher;
+}
+
+function parseSteps(text) {
+    const lines = text.split("\n").map(l=>l.trim()).filter(l=>l && !l.startsWith("="));
+
+    const result = {};
+
+    lines.forEach(line => {
+        const [key, value] = line.split(":").map(s => s.trim());
+
+        // Normalize keys to dictionary-friendly names
+        switch (key) {
+            case "Input letter":
+                result.input = value;
+                break;
+            case "Rotor position":
+                result.rotorPosition = value;
+                break;
+
+            case "Plugboard encryption":
+                if (!result.plugboard) result.plugboard = { in: null, out: null };
+                if (result.plugboard.in === null) result.plugboard.in = value;
+                else result.plugboard.out = value;
+                break;
+
+            case "Rotor 3 encryption":
+                if (!result.rotor3) result.rotor3 = { in: value, out: null };
+                else result.rotor3.out = value;
+                break;
+
+            case "Rotor 2 encryption":
+                if (!result.rotor2) result.rotor2 = { in: value, out: null };
+                else result.rotor2.out = value;
+                break;
+
+            case "Rotor 1 encryption":
+                if (!result.rotor1) result.rotor1 = { in: value, out: null };
+                else result.rotor1.out = value;
+                break;
+
+            case "Reflector encryption":
+                result.reflector = value;
+                break;
+        }
+    });
+
+    return result;
+}
+
+function startAnimation(text) {
+    console.log(text);
+    const result = parseSteps(text);
+    console.log(result);
+
+    svg.selectAll(".flow-arrow").remove();
+
+    drawArrow(`key-${result.input}`, `pb-${result.input}-in`, "#4cc9f0", "arrowKbToPb");
+    drawArrow(`pb-${result.input}-in`, `pb-${result.plugboard.in}-out`, "#4cf052ff", "arrowPbToPbIn");
+    drawArrow(`pb-${result.plugboard.in}-out`, `rotor3-${result.rotor3.in}`, "#4cf052ff", "arrowPbToRotor3");
+    drawArrow(`rotor3-${result.rotor3.in}`, `rotor2-${result.rotor2.in}`, "#575757ff", "arrowRotor3ToRotor2");
+    drawArrow(`rotor2-${result.rotor2.in}`, `rotor1-${result.rotor1.in}`, "#575757ff", "arrowRotor2ToRotor1");
+    drawArrow(`rotor1-${result.rotor1.in}`, `reflector-${result.reflector}`, "#575757ff", "arrowRotor1ToReflector");
+    drawArrow(`reflector-${result.reflector}`, `rotor1-${result.rotor1.out}`, "#7300d8ff", "arrowReflectorToRotor1");
+
+    drawArrow(`rotor1-${result.rotor1.out}`, `rotor2-${result.rotor2.out}`, "#575757ff", "arrowRotor1ToRotor2");
+    drawArrow(`rotor2-${result.rotor2.out}`, `rotor3-${result.rotor3.out}`, "#575757ff", "arrowRotor2ToRotor3");
+    drawArrow(`rotor3-${result.rotor3.out}`, `pb-${result.rotor3.out}-out`, "#575757ff", "arrowRotor3ToPb");
+    drawArrow(`pb-${result.rotor3.out}-out`, `pb-${result.plugboard.out}-in`, "#4cf052ff", "arrowPbToPbOut");
+    drawArrow(`pb-${result.plugboard.out}-in`, `lampboard-${result.plugboard.out}`, "#4cf052ff", "arrowPbToLampboard");
+}
+
+function getNodeCenter(id) {
+    const node = d3.select(`#${id}`).node();
+    const bbox = node.getBBox();
+    const matrix = node.getCTM();
+
+    return {
+        x: matrix.e + bbox.x + bbox.width / 2,
+        y: matrix.f + bbox.y + bbox.height / 2
+    };
+}
+
+function drawArrow(fromId, toId, color, arrowId) {
+    const p1 = getNodeCenter(fromId);
+    const p2 = getNodeCenter(toId);
+
+    svg.append("line")
+        .attr("class", "flow-arrow")
+        .attr("x1", p1.x)
+        .attr("y1", p1.y)
+        .attr("x2", p2.x)
+        .attr("y2", p2.y)
+        .attr("stroke", color)
+        .style("color", color)
+        .attr("stroke-width", 3)
+        .attr("marker-end", "url(#"+arrowId+")");
 }
 
 async function lightOnOffAnim(letter) {
@@ -508,28 +627,360 @@ async function lightOnOffAnim(letter) {
 }
 
 
-const width = 1200;
+const width =1200;
 const height = 800;
+const keySize = 35;
+const spacing = 5;
 
 const svg = d3.select("#viz")
             .append("svg")
             .attr("width", width)
             .attr("height", height)
-            .attr("viewBox", `0 0 ${width} ${height}`);
+            .attr("viewBox", `0 0 ${width} ${height}`)
+            ;
+            
+svg.append("defs").append("marker")
+    .attr("id", "arrowKbToPb")
+    .attr("viewBox", "0 0 10 10")
+    .attr("refX", 10)
+    .attr("refY", 5)
+    .attr("markerWidth", 6)
+    .attr("markerHeight", 6)
+    .attr("markerUnits", "strokeWidth")
+    .attr("orient", "auto")
+    .append("path")
+    .attr("d", "M 0 0 L 10 5 L 0 10 z")
+    .attr("fill", "#4cc9f0");
+
+svg.append("defs").append("marker")
+    .attr("id", "arrowPbToPbIn")
+    .attr("viewBox", "0 0 10 10")
+    .attr("refX", 10)
+    .attr("refY", 5)
+    .attr("markerWidth", 6)
+    .attr("markerHeight", 6)
+    .attr("markerUnits", "strokeWidth")
+    .attr("orient", "auto")
+    .append("path")
+    .attr("d", "M 0 0 L 10 5 L 0 10 z")
+    .attr("fill", "#4cf052ff");
+
+svg.append("defs").append("marker")
+    .attr("id", "arrowPbToRotor3")
+    .attr("viewBox", "0 0 10 10")
+    .attr("refX", 10)
+    .attr("refY", 5)
+    .attr("markerWidth", 6)
+    .attr("markerHeight", 6)
+    .attr("markerUnits", "strokeWidth")
+    .attr("orient", "auto")
+    .append("path")
+    .attr("d", "M 0 0 L 10 5 L 0 10 z")
+    .attr("fill", "#4cf052ff");
+
+svg.append("defs").append("marker")
+    .attr("id", "arrowRotor3ToRotor2")
+    .attr("viewBox", "0 0 10 10")
+    .attr("refX", 10)
+    .attr("refY", 5)
+    .attr("markerWidth", 6)
+    .attr("markerHeight", 6)
+    .attr("markerUnits", "strokeWidth")
+    .attr("orient", "auto")
+    .append("path")
+    .attr("d", "M 0 0 L 10 5 L 0 10 z")
+    .attr("fill", "#575757ff");
+
+svg.append("defs").append("marker")
+    .attr("id", "arrowRotor2ToRotor1")
+    .attr("viewBox", "0 0 10 10")
+    .attr("refX", 10)
+    .attr("refY", 5)
+    .attr("markerWidth", 6)
+    .attr("markerHeight", 6)
+    .attr("markerUnits", "strokeWidth")
+    .attr("orient", "auto")
+    .append("path")
+    .attr("d", "M 0 0 L 10 5 L 0 10 z")
+    .attr("fill", "#575757ff");
+
+svg.append("defs").append("marker")
+    .attr("id", "arrowRotor1ToReflector")
+    .attr("viewBox", "0 0 10 10")
+    .attr("refX", 10)
+    .attr("refY", 5)
+    .attr("markerWidth", 6)
+    .attr("markerHeight", 6)
+    .attr("markerUnits", "strokeWidth")
+    .attr("orient", "auto")
+    .append("path")
+    .attr("d", "M 0 0 L 10 5 L 0 10 z")
+    .attr("fill", "#575757ff");
+
+svg.append("defs").append("marker")
+    .attr("id", "arrowReflectorToRotor1")
+    .attr("viewBox", "0 0 10 10")
+    .attr("refX", 10)
+    .attr("refY", 5)
+    .attr("markerWidth", 6)
+    .attr("markerHeight", 6)
+    .attr("markerUnits", "strokeWidth")
+    .attr("orient", "auto")
+    .append("path")
+    .attr("d", "M 0 0 L 10 5 L 0 10 z")
+    .attr("fill", "#7300d8ff");
+    
+svg.append("defs").append("marker")
+    .attr("id", "arrowRotor1ToRotor2")
+    .attr("viewBox", "0 0 10 10")
+    .attr("refX", 10)
+    .attr("refY", 5)
+    .attr("markerWidth", 6)
+    .attr("markerHeight", 6)
+    .attr("markerUnits", "strokeWidth")
+    .attr("orient", "auto")
+    .append("path")
+    .attr("d", "M 0 0 L 10 5 L 0 10 z")
+    .attr("fill", "#575757ff");
+
+svg.append("defs").append("marker")
+    .attr("id", "arrowRotor2ToRotor3")
+    .attr("viewBox", "0 0 10 10")
+    .attr("refX", 10)
+    .attr("refY", 5)
+    .attr("markerWidth", 6)
+    .attr("markerHeight", 6)
+    .attr("markerUnits", "strokeWidth")
+    .attr("orient", "auto")
+    .append("path")
+    .attr("d", "M 0 0 L 10 5 L 0 10 z")
+    .attr("fill", "#575757ff");
+
+svg.append("defs").append("marker")
+    .attr("id", "arrowRotor3ToPb")
+    .attr("viewBox", "0 0 10 10")
+    .attr("refX", 10)
+    .attr("refY", 5)
+    .attr("markerWidth", 6)
+    .attr("markerHeight", 6)
+    .attr("markerUnits", "strokeWidth")
+    .attr("orient", "auto")
+    .append("path")
+    .attr("d", "M 0 0 L 10 5 L 0 10 z")
+    .attr("fill", "#575757ff");
+
+svg.append("defs").append("marker")
+    .attr("id", "arrowPbToPbOut")
+    .attr("viewBox", "0 0 10 10")
+    .attr("refX", 10)
+    .attr("refY", 5)
+    .attr("markerWidth", 6)
+    .attr("markerHeight", 6)
+    .attr("markerUnits", "strokeWidth")
+    .attr("orient", "auto")
+    .append("path")
+    .attr("d", "M 0 0 L 10 5 L 0 10 z")
+    .attr("fill", "#4cf052ff");
+
+svg.append("defs").append("marker")
+    .attr("id", "arrowPbToLampboard")
+    .attr("viewBox", "0 0 10 10")
+    .attr("refX", 10)
+    .attr("refY", 5)
+    .attr("markerWidth", 6)
+    .attr("markerHeight", 6)
+    .attr("markerUnits", "strokeWidth")
+    .attr("orient", "auto")
+    .append("path")
+    .attr("d", "M 0 0 L 10 5 L 0 10 z")
+    .attr("fill", "#4cf052ff");
 
 const components = {
-            keyboard: { x: 0, y: 500, width: 400, height: 225, cols: 13 },
-            plugboard: { x: 0, y: 300, width: 900, height: 175, cols: 13 },
-            rotor3: { x: 200, y: 300, width: 100, height: 100 },
-            rotor2: { x: 400, y: 300, width: 100, height: 100 },
-            rotor1: { x: 600, y: 300, width: 100, height: 100 },
-            reflector: { x: 800, y: 300, width: 100, height: 100 },
-            lampboard: { x: 500, y: 500, width: 400, height: 225, cols: 13 }
+            keyboard: { x: 0, y: 550, width: 400, height: 175, cols: 13 },
+            plugboard: { x: 0, y: 360, width: 900, height: 175, cols: 13 },
+            rotor3: { x: 0, y: 273, width: 900, height: 72 },
+            rotor2: { x: 0, y: 186, width: 900, height: 72 },
+            rotor1: { x: 0, y: 99, width: 900, height: 72 },
+            reflector: { x: 0, y: 10, width: 900, height: 72 },
+            lampboard: { x: 500, y: 550, width: 400, height: 175, cols: 13 }
         };
 
+const rotor1Component = components.rotor1
+const rotor1Section = svg.append("g")
+        .attr("class", "rotor-section")
+        .attr("transform", "translate("+rotor1Component.x+", "+rotor1Component.y+")")
+
+rotor1Section.append("rect")
+    .attr("class", "section-box")
+    .attr("width", rotor1Component.width)
+    .attr("height", rotor1Component.height)
+    .attr("fill", "#f5f5f5")
+    .attr("stroke", "#575757ff")
+    .attr("stroke-width", 2)
+    .attr("rx", 10)
+    .attr("ry", 10);
+
+rotor1Section.append("text")
+    .attr("class", "section-title")
+    .attr("x", rotor1Component.width/2) // Center of the rectangle (500/2)
+    .attr("y", 20)
+    .attr("text-anchor", "middle")
+    .attr("font-size", "18px")
+    .attr("font-weight", "bold")
+    .attr("fill", "#333")
+    .text("Rotor 1");
+
+letters.forEach((letter, i) => {
+    const x = i * (keySize-2)+20;
+    const y = 30;
+    const rotor1Letter = rotor1Section.append("g")
+                    .attr("class", "key-node")
+                    .attr("id", `rotor1-${letter}`)
+                    .attr("transform", `translate(${x}, ${y})`);
+
+    rotor1Letter.append("text")
+        .attr("x", keySize/2)
+        .attr("y", keySize/2 + 5)
+        .attr("text-anchor", "middle")
+        .attr("fill", "black")
+        .attr("font-weight", "bold")
+        .attr("font-size", "16px")
+        .text(letter);
+});
+
+const rotor2Component = components.rotor2
+const rotor2Section = svg.append("g")
+        .attr("class", "rotor-section")
+        .attr("transform", "translate("+rotor2Component.x+", "+rotor2Component.y+")")
+
+rotor2Section.append("rect")
+    .attr("class", "section-box")
+    .attr("width", rotor2Component.width)
+    .attr("height", rotor2Component.height)
+    .attr("fill", "#f5f5f5")
+    .attr("stroke", "#575757ff")
+    .attr("stroke-width", 2)
+    .attr("rx", 10)
+    .attr("ry", 10);
+
+rotor2Section.append("text")
+    .attr("class", "section-title")
+    .attr("x", rotor2Component.width/2) // Center of the rectangle (500/2)
+    .attr("y", 20)
+    .attr("text-anchor", "middle")
+    .attr("font-size", "18px")
+    .attr("font-weight", "bold")
+    .attr("fill", "#333")
+    .text("Rotor 2");
+
+letters.forEach((letter, i) => {
+    const x = i * (keySize-2)+20;
+    const y = 30;
+    const rotor2Letter = rotor2Section.append("g")
+                    .attr("class", "key-node")
+                    .attr("id", `rotor2-${letter}`)
+                    .attr("transform", `translate(${x}, ${y})`);
+
+    rotor2Letter.append("text")
+        .attr("x", keySize/2)
+        .attr("y", keySize/2 + 5)
+        .attr("text-anchor", "middle")
+        .attr("fill", "black")
+        .attr("font-weight", "bold")
+        .attr("font-size", "16px")
+        .text(letter);
+});
+
+const rotor3Component = components.rotor3
+const rotor3Section = svg.append("g")
+        .attr("class", "rotor-section")
+        .attr("transform", "translate("+rotor3Component.x+", "+rotor3Component.y+")")
+
+rotor3Section.append("rect")
+    .attr("class", "section-box")
+    .attr("width", rotor3Component.width)
+    .attr("height", rotor3Component.height)
+    .attr("fill", "#f5f5f5")
+    .attr("stroke", "#575757ff")
+    .attr("stroke-width", 2)
+    .attr("rx", 10)
+    .attr("ry", 10);
+
+rotor3Section.append("text")
+    .attr("class", "section-title")
+    .attr("x", rotor3Component.width/2) // Center of the rectangle (500/2)
+    .attr("y", 20)
+    .attr("text-anchor", "middle")
+    .attr("font-size", "18px")
+    .attr("font-weight", "bold")
+    .attr("fill", "#333")
+    .text("Rotor 3");
+
+letters.forEach((letter, i) => {
+    const x = i * (keySize-2)+20;
+    const y = 30;
+    const rotor3Letter = rotor3Section.append("g")
+                    .attr("class", "key-node")
+                    .attr("id", `rotor3-${letter}`)
+                    .attr("transform", `translate(${x}, ${y})`);
+
+    rotor3Letter.append("text")
+        .attr("x", keySize/2)
+        .attr("y", keySize/2 + 5)
+        .attr("text-anchor", "middle")
+        .attr("fill", "black")
+        .attr("font-weight", "bold")
+        .attr("font-size", "16px")
+        .text(letter);
+});
+
+
+const reflectorComponent = components.reflector
+const reflectorSection = svg.append("g")
+        .attr("class", "rotor-section")
+        .attr("transform", "translate("+reflectorComponent.x+", "+reflectorComponent.y+")")
+
+reflectorSection.append("rect")
+    .attr("class", "section-box")
+    .attr("width", reflectorComponent.width)
+    .attr("height", reflectorComponent.height)
+    .attr("fill", "#f5f5f5")
+    .attr("stroke", "#7300d8ff")
+    .attr("stroke-width", 2)
+    .attr("rx", 10)
+    .attr("ry", 10);
+
+reflectorSection.append("text")
+    .attr("class", "section-title")
+    .attr("x", reflectorComponent.width/2) // Center of the rectangle (500/2)
+    .attr("y", 20)
+    .attr("text-anchor", "middle")
+    .attr("font-size", "18px")
+    .attr("font-weight", "bold")
+    .attr("fill", "#333")
+    .text("Reflector");
+
+letters.forEach((letter, i) => {
+    const x = i * (keySize-2)+20;
+    const y = 30;
+    const reflectorLetter = reflectorSection.append("g")
+                    .attr("class", "key-node")
+                    .attr("id", `reflector-${letter}`)
+                    .attr("transform", `translate(${x}, ${y})`);
+
+    reflectorLetter.append("text")
+        .attr("x", keySize/2)
+        .attr("y", keySize/2 + 5)
+        .attr("text-anchor", "middle")
+        .attr("fill", "black")
+        .attr("font-weight", "bold")
+        .attr("font-size", "16px")
+        .text(letter);
+});
+
+
 const kb = components.keyboard;
-const keySize = 35;
-const spacing = 5;
+
 
 const keyboardWidth = kb.width;
 const keyboardHeight = kb.height;
@@ -567,7 +1018,7 @@ const row2Letters = "ASDFGHJK".split("");
 const row3Letters = "PYXCVBNML".split("");
 
 row1Letters.forEach((letter, i) => {
-    const row = 1;
+    const row = 0;
     const col = i % kb.cols
 
     const x = col * (keySize+spacing) + 20;
@@ -599,7 +1050,7 @@ row1Letters.forEach((letter, i) => {
 });
 
 row2Letters.forEach((letter, i) => {
-    const row = 2;
+    const row = 1;
     const col = i % kb.cols
 
     const x = col * (keySize+spacing) + 40;
@@ -631,7 +1082,7 @@ row2Letters.forEach((letter, i) => {
 });
 
 row3Letters.forEach((letter, i) => {
-    const row = 3;
+    const row = 2;
     const col = i % kb.cols
 
     const x = col * (keySize+spacing) + 20;
@@ -694,7 +1145,7 @@ const lampboardGroup = lampboardSection.append("g")
                 .attr("class", "lampboard-group");
 
 row1Letters.forEach((letter, i) => {
-    const row = 1;
+    const row = 0;
     const col = i % kb.cols
 
     const x = col * (keySize+spacing) + 20;
@@ -702,7 +1153,7 @@ row1Letters.forEach((letter, i) => {
 
     const key = lampboardGroup.append("g")
                     .attr("class", "key-node")
-                    .attr("id", `key-${letter}`)
+                    .attr("id", `lampboard-${letter}`)
                     .attr("transform", `translate(${x}, ${y})`);
 
     key.append("rect")
@@ -726,7 +1177,7 @@ row1Letters.forEach((letter, i) => {
 });
 
 row2Letters.forEach((letter, i) => {
-    const row = 2;
+    const row = 1;
     const col = i % kb.cols
 
     const x = col * (keySize+spacing) + 40;
@@ -734,7 +1185,7 @@ row2Letters.forEach((letter, i) => {
 
     const key = lampboardGroup.append("g")
                     .attr("class", "key-node")
-                    .attr("id", `key-${letter}`)
+                    .attr("id", `lampboard-${letter}`)
                     .attr("transform", `translate(${x}, ${y})`);
 
     key.append("rect")
@@ -758,7 +1209,7 @@ row2Letters.forEach((letter, i) => {
 });
 
 row3Letters.forEach((letter, i) => {
-    const row = 3;
+    const row = 2;
     const col = i % kb.cols
 
     const x = col * (keySize+spacing) + 20;
@@ -766,7 +1217,7 @@ row3Letters.forEach((letter, i) => {
 
     const lamp = lampboardGroup.append("g")
                     .attr("class", "key-node")
-                    .attr("id", `key-${letter}`)
+                    .attr("id", `lampboard-${letter}`)
                     .attr("transform", `translate(${x}, ${y})`);
 
     lamp.append("rect")
@@ -822,7 +1273,7 @@ letters.forEach((letter, i) => {
     const y = 1 * (keySize+spacing);
     const pbLetter = plugboardGroup.append("g")
                     .attr("class", "key-node")
-                    .attr("id", `key-${letter}`)
+                    .attr("id", `pb-${letter}-out`)
                     .attr("transform", `translate(${x}, ${y})`);
 
     pbLetter.append("text")
@@ -840,7 +1291,7 @@ letters.forEach((letter, i) => {
     const y = 2 * (keySize+spacing) + 45;
     const pbLetter = plugboardGroup.append("g")
                     .attr("class", "key-node")
-                    .attr("id", `key-${letter}`)
+                    .attr("id", `pb-${letter}-in`)
                     .attr("transform", `translate(${x}, ${y})`);
 
     pbLetter.append("text")
