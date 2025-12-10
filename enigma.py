@@ -157,8 +157,8 @@ class Enigma:
             print("="*25)
         
         self.encrypt_steps += f"Plugboard encryption: {plug_out}\n"
-        self.encrypt_steps += "="*25
-        self.encrypt_steps += "\n"
+        # self.encrypt_steps += "="*25
+        # self.encrypt_steps += "\n"
 
         return plug_out
     

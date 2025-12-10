@@ -501,20 +501,29 @@ async function sendToEnigmaPy(letter, rotor1Position, rotor2Position, rotor3Posi
     
     let stepText = document.createElement("p");
     stepText.id = "step-"+count+"-text";
-    stepText.innerHTML = count + ".<br>" + formatted;
+    stepText.innerHTML = count + ". " + formatted;
     
     let stepButton = document.createElement("button");
     stepButton.id = "step-"+count+"-button";
-    stepButton.innerHTML = "Show encryption path";
+    stepButton.innerHTML = "Show encryption path for "+count+".";
 
     stepButton.addEventListener("click", () => {
         console.log("step "+stepButton.id+" clicked");
+
+        const diagram = document.getElementById("viz");
+        if (diagram) {
+            diagram.scrollIntoView({behavior: "smooth", block: "start"});
+        }
+
         startAnimation(steps);
+
+        
     });
     
     stepDetails.append(stepText);
     stepDetails.append(stepButton);
-    document.getElementById("steps-section").append(stepDetails);
+    document.getElementById("steps-section").insertBefore(stepDetails, document.getElementById("viz"));
+    // document.getElementById("steps-section").append(stepDetails);
 
     count++; 
     return data.cipher;
@@ -588,7 +597,7 @@ function startAnimation(text) {
         [`pb-${result.rotor3.out}-out`, `pb-${result.plugboard.out}-in`, "#4cf052ff", "arrowPbToPbOut"],
         [`pb-${result.plugboard.out}-in`, `lampboard-${result.plugboard.out}`, "#4cf052ff", "arrowPbToLampboard"]
     ];
-    
+
     function animateArrow(index) {
         if (index >= arrows.length) return;
         const [fromId, toId, color, arrowId] = arrows[index];
