@@ -8,6 +8,12 @@ let usedColors = [];
 const rotor1 = document.getElementById("rotor-1");
 const rotor2 = document.getElementById("rotor-2");
 const rotor3 = document.getElementById("rotor-3");
+var rotor1Option = "EKMFLGDQVZNTOWYHXUSPAIBRCJ";
+var rotor2Option = "AJDKSIRUXBLHWTMCQGZNPYFVOE";
+var rotor3Option = "BDFHJLCPRTXVZNYEIWGAKMUSQO";
+var rotor1Notch = "Q";
+var rotor2Notch = "E";
+var rotor3Notch = "V";
 var ring1 = 0;
 var ring2 = 0;
 var ring3 = 0;
@@ -15,6 +21,13 @@ var steps = "";
 var count = 1;
 
 const ITEM_HEIGHT = 40;
+const rotors = [
+    {"name": "Rotor I", "val": "EKMFLGDQVZNTOWYHXUSPAIBRCJ", "notch": "Q"},
+    {"name": "Rotor II", "val": "AJDKSIRUXBLHWTMCQGZNPYFVOE", "notch": "E"},
+    {"name": "Rotor III", "val": "BDFHJLCPRTXVZNYEIWGAKMUSQO", "notch": "V"},
+    {"name": "Rotor IV", "val": "ESOVPZJAYQUIRHXLNFTGKDCMWB", "notch": "J"},
+    {"name": "Rotor V", "val": "VZBRGITYUPSDNHLXAWMJQOFECK", "notch": "Z"},
+];
 const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 let currentIdx1 = 0;
 let currentIdx2 = 0;
@@ -69,6 +82,53 @@ function rotorPosOverlay() {
     header.appendChild(headerRotor2);
     header.appendChild(headerRotor3);
     content.appendChild(header);
+
+    const rotorSetting = document.createElement("tr");
+    rotorSetting.className = "rotor-setting-section";
+    const rotorSettingDesc = document.createElement("td");
+    rotorSettingDesc.innerText = "Rotor:";
+
+    const rotor1Cell = document.createElement("td");
+    const rotor1Select = document.createElement("select");
+    rotor1Select.id = "rotor1-option";
+    for (let rotor of rotors) {
+        var opt = document.createElement("option");
+        opt.value = rotor.val;
+        opt.innerHTML = rotor.name;
+        rotor1Select.appendChild(opt);
+    }
+    rotor1Select.value = rotor1Option;
+
+    const rotor2Cell = document.createElement("td");
+    const rotor2Select = document.createElement("select");
+    rotor2Select.id = "rotor2-option";
+    for (let rotor of rotors) {
+        var opt = document.createElement("option");
+        opt.value = rotor.val;
+        opt.innerHTML = rotor.name;
+        rotor2Select.appendChild(opt);
+    }
+    rotor2Select.value = rotor2Option;
+    
+    const rotor3Cell = document.createElement("td");
+    const rotor3Select = document.createElement("select");
+    rotor3Select.id = "rotor3-option";
+    for (let rotor of rotors) {
+        var opt = document.createElement("option");
+        opt.value = rotor.val;
+        opt.innerHTML = rotor.name;
+        rotor3Select.appendChild(opt);
+    }
+    rotor3Select.value = rotor3Option;
+    
+    rotor1Cell.appendChild(rotor1Select);
+    rotor2Cell.appendChild(rotor2Select);
+    rotor3Cell.appendChild(rotor3Select);
+    rotorSetting.appendChild(rotorSettingDesc);
+    rotorSetting.appendChild(rotor1Cell);
+    rotorSetting.appendChild(rotor2Cell);
+    rotorSetting.appendChild(rotor3Cell);
+
 
     const ringSetting = document.createElement("tr");
     ringSetting.className = "ring-setting-section";
@@ -159,6 +219,7 @@ function rotorPosOverlay() {
     rotorPos.appendChild(rotor2PosCell);
     rotorPos.appendChild(rotor3PosCell);
 
+    content.appendChild(rotorSetting);
     content.appendChild(ringSetting)
     content.appendChild(rotorPos); 
     overlay.appendChild(content);
@@ -169,9 +230,21 @@ function rotorPosOverlay() {
             ring1 = letters.indexOf(rotor1RingSelector.value);
             ring2 = letters.indexOf(rotor2RingSelector.value);
             ring3 = letters.indexOf(rotor3RingSelector.value);
+
             setRotorPosition(rotor1, rotor1PosSelector.value);
             setRotorPosition(rotor2, rotor2PosSelector.value);
             setRotorPosition(rotor3, rotor3PosSelector.value);
+
+            rotor1Option = rotor1Select.value;
+            rotor1Notch = rotors.find(r=>r.val === rotor1Select.value).notch;
+            console.log(rotor1Notch);
+
+            rotor2Option = rotor2Select.value;
+            rotor2Notch = rotors.find(r=>r.val === rotor2Select.value).notch;
+
+            rotor3Option = rotor3Select.value;
+            rotor3Notch = rotors.find(r=>r.val === rotor3Select.value).notch;
+            console.log(rotor3Select.value);
             overlay.remove();
         }
     });
@@ -445,7 +518,7 @@ keys.forEach(key => {
 
         console.log("sending to server with position:"+rotor1Pos+rotor2Pos+rotor3Pos)
 
-        const encrypted = await sendToEnigmaPy(letter, rotor1Pos, rotor2Pos, rotor3Pos);
+        const encrypted = await sendToEnigmaPy(letter, rotor1Pos, rotor2Pos, rotor3Pos, rotor1Option, rotor2Option, rotor3Option, rotor1Notch, rotor2Notch, rotor3Notch);
         document.getElementById("output").textContent += encrypted;
 
         lightOnOffAnim(encrypted.toLowerCase());
@@ -461,7 +534,7 @@ document.addEventListener("keydown", async function (e) {
         var rotor2Pos = getRotorPosition(2);
         var rotor3Pos = getRotorPosition(3);
 
-        const encrypted = await sendToEnigmaPy(letter, rotor1Pos, rotor2Pos, rotor3Pos);
+        const encrypted = await sendToEnigmaPy(letter, rotor1Pos, rotor2Pos, rotor3Pos, rotor1Option, rotor2Option, rotor3Option, rotor1Notch, rotor2Notch, rotor3Notch);
 
         document.getElementById("output").textContent += encrypted;
         
@@ -469,7 +542,7 @@ document.addEventListener("keydown", async function (e) {
     }
 });
 
-async function sendToEnigmaPy(letter, rotor1Position, rotor2Position, rotor3Position) {
+async function sendToEnigmaPy(letter, rotor1Position, rotor2Position, rotor3Position, rotor1, rotor2, rotor3, rotor1Notch, rotor2Notch, rotor3Notch) {
     const res = await fetch(`${url}:${port}/encrypt`, {
         method: "POST",
         headers: {"Content-Type": "application/json"},
@@ -478,6 +551,12 @@ async function sendToEnigmaPy(letter, rotor1Position, rotor2Position, rotor3Posi
             ring1: ring1,
             ring2: ring2,
             ring3: ring3,
+            rotor1: rotor1,
+            rotor2: rotor2,
+            rotor3: rotor3,
+            rotor1Notch: rotor1Notch,
+            rotor2Notch: rotor2Notch,
+            rotor3Notch: rotor3Notch,
             rotor1Pos: rotor1Position, 
             rotor2Pos: rotor2Position,
             rotor3Pos: rotor3Position})

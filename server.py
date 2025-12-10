@@ -24,13 +24,19 @@ def encrypt():
     ring1 = data['ring1']
     ring2 = data['ring2']
     ring3 = data['ring3']
+    rotor1 = data['rotor1']
+    rotor2 = data['rotor2']
+    rotor3 = data['rotor3']
+    rotor1Notch = data['rotor1Notch']
+    rotor2Notch = data['rotor2Notch']
+    rotor3Notch = data['rotor3Notch']
     rotor1Pos = data["rotor1Pos"]
     rotor2Pos = data["rotor2Pos"]
     rotor3Pos = data["rotor3Pos"]
 
-    left = Rotor(ROTOR_1, ROTOR_1_STEP, ring_setting=ring1, position=rotor1Pos)
-    mid = Rotor(ROTOR_2, ROTOR_2_STEP, ring_setting=ring2, position=rotor2Pos)
-    right = Rotor(ROTOR_3, ROTOR_3_STEP, ring_setting=ring3, position=rotor3Pos)
+    left = Rotor(rotor1, rotor1Notch, ring_setting=ring1, position=rotor1Pos)
+    mid = Rotor(rotor2, rotor2Notch, ring_setting=ring2, position=rotor2Pos)
+    right = Rotor(rotor3, rotor3Notch, ring_setting=ring3, position=rotor3Pos)
 
     plugboard = Plugboard(PLUGBOARD_MAPPING)
 
