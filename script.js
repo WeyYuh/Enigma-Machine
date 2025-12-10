@@ -574,19 +574,30 @@ function startAnimation(text) {
 
     svg.selectAll(".flow-arrow").remove();
 
-    drawArrow(`key-${result.input}`, `pb-${result.input}-in`, "#4cc9f0", "arrowKbToPb");
-    drawArrow(`pb-${result.input}-in`, `pb-${result.plugboard.in}-out`, "#4cf052ff", "arrowPbToPbIn");
-    drawArrow(`pb-${result.plugboard.in}-out`, `rotor3-${result.rotor3.in}`, "#4cf052ff", "arrowPbToRotor3");
-    drawArrow(`rotor3-${result.rotor3.in}`, `rotor2-${result.rotor2.in}`, "#575757ff", "arrowRotor3ToRotor2");
-    drawArrow(`rotor2-${result.rotor2.in}`, `rotor1-${result.rotor1.in}`, "#575757ff", "arrowRotor2ToRotor1");
-    drawArrow(`rotor1-${result.rotor1.in}`, `reflector-${result.reflector}`, "#575757ff", "arrowRotor1ToReflector");
-    drawArrow(`reflector-${result.reflector}`, `rotor1-${result.rotor1.out}`, "#7300d8ff", "arrowReflectorToRotor1");
+    const arrows = [
+        [`key-${result.input}`, `pb-${result.input}-in`, "#4cc9f0", "arrowKbToPb"],
+        [`pb-${result.input}-in`, `pb-${result.plugboard.in}-out`, "#4cf052ff", "arrowPbToPbIn"],
+        [`pb-${result.plugboard.in}-out`, `rotor3-${result.rotor3.in}`, "#4cf052ff", "arrowPbToRotor3"],
+        [`rotor3-${result.rotor3.in}`, `rotor2-${result.rotor2.in}`, "#575757ff", "arrowRotor3ToRotor2"],
+        [`rotor2-${result.rotor2.in}`, `rotor1-${result.rotor1.in}`, "#575757ff", "arrowRotor2ToRotor1"],
+        [`rotor1-${result.rotor1.in}`, `reflector-${result.reflector}`, "#575757ff", "arrowRotor1ToReflector"],
+        [`reflector-${result.reflector}`, `rotor1-${result.rotor1.out}`, "#7300d8ff", "arrowReflectorToRotor1"],
+        [`rotor1-${result.rotor1.out}`, `rotor2-${result.rotor2.out}`, "#575757ff", "arrowRotor1ToRotor2"],
+        [`rotor2-${result.rotor2.out}`, `rotor3-${result.rotor3.out}`, "#575757ff", "arrowRotor2ToRotor3"],
+        [`rotor3-${result.rotor3.out}`, `pb-${result.rotor3.out}-out`, "#575757ff", "arrowRotor3ToPb"],
+        [`pb-${result.rotor3.out}-out`, `pb-${result.plugboard.out}-in`, "#4cf052ff", "arrowPbToPbOut"],
+        [`pb-${result.plugboard.out}-in`, `lampboard-${result.plugboard.out}`, "#4cf052ff", "arrowPbToLampboard"]
+    ];
+    
+    function animateArrow(index) {
+        if (index >= arrows.length) return;
+        const [fromId, toId, color, arrowId] = arrows[index];
+        drawArrow(fromId, toId, color, arrowId, 500, () => {
+            animateArrow(index + 1);
+        });
+    }
 
-    drawArrow(`rotor1-${result.rotor1.out}`, `rotor2-${result.rotor2.out}`, "#575757ff", "arrowRotor1ToRotor2");
-    drawArrow(`rotor2-${result.rotor2.out}`, `rotor3-${result.rotor3.out}`, "#575757ff", "arrowRotor2ToRotor3");
-    drawArrow(`rotor3-${result.rotor3.out}`, `pb-${result.rotor3.out}-out`, "#575757ff", "arrowRotor3ToPb");
-    drawArrow(`pb-${result.rotor3.out}-out`, `pb-${result.plugboard.out}-in`, "#4cf052ff", "arrowPbToPbOut");
-    drawArrow(`pb-${result.plugboard.out}-in`, `lampboard-${result.plugboard.out}`, "#4cf052ff", "arrowPbToLampboard");
+    animateArrow(0);
 }
 
 function getNodeCenter(id) {
@@ -600,20 +611,30 @@ function getNodeCenter(id) {
     };
 }
 
-function drawArrow(fromId, toId, color, arrowId) {
+function drawArrow(fromId, toId, color, arrowId, duration = 1000, callback) {
     const p1 = getNodeCenter(fromId);
     const p2 = getNodeCenter(toId);
+    const length = Math.hypot(p2.x - p1.x, p2.y - p1.y);
 
-    svg.append("line")
+    const line = svg.append("line")
         .attr("class", "flow-arrow")
         .attr("x1", p1.x)
         .attr("y1", p1.y)
         .attr("x2", p2.x)
         .attr("y2", p2.y)
         .attr("stroke", color)
-        .style("color", color)
         .attr("stroke-width", 3)
-        .attr("marker-end", "url(#"+arrowId+")");
+        .attr("stroke-dasharray", length)
+        .attr("stroke-dashoffset", length);
+
+    line.transition()
+        .duration(duration)
+        .ease(d3.easeLinear)
+        .attr("stroke-dashoffset", 0)
+        .on("end", () => {
+            line.attr("marker-end", `url(#${arrowId})`);
+            if (callback) callback();
+        });
 }
 
 async function lightOnOffAnim(letter) {
