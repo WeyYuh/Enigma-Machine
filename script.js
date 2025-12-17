@@ -599,8 +599,10 @@ async function sendToEnigmaPy(letter, rotor1Position, rotor2Position, rotor3Posi
             diagram.scrollIntoView({behavior: "smooth", block: "start"});
         }
 
-        startAnimation(steps);
-
+        const stepNumber = stepButton.id.split("-")[1];
+        const stepText = document.getElementById(`step-${stepNumber}-text`).innerText;
+        console.log(stepText.replace(/^\d+\.\s*/, ""));
+        startAnimation(stepText.replace(/^\d+\.\s*/, ""));
         
     });
     
