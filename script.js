@@ -737,17 +737,28 @@ function drawPbConnections(pbMapping) {
             drawPbLine(pair, letter, colors[count]);
             drawn.add(letter);
             drawn.add(pair);
+            count++;
         } else {
             drawPbLine(letter, letter, "#000000");
             drawn.add(letter);
         }
-        count++;
+        
     });
 }
 
 function drawPbLine(a, b, color) {
     const from = getNodeCenter(`pb-${a}-in`);
     const to = getNodeCenter(`pb-${b}-out`);
+
+    svg.append("line")
+        .attr("class", "plugboard-connection-outline")
+        .attr("x1", from.x)
+        .attr("y1", from.y - 10)
+        .attr("x2", to.x)
+        .attr("y2", to.y + 10)
+        .attr("stroke", "#000")      
+        .attr("stroke-width", 4.25)     
+        .attr("opacity", 0.9);
 
     svg.append("line")
         .attr("class", "plugboard-connection")
