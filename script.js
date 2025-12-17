@@ -1,4 +1,4 @@
-const url = "http://localhost"
+const url = "http://127.0.0.1"
 const port = 5000
 
 let selected = [];
