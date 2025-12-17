@@ -671,15 +671,32 @@ function startAnimation(text, pbMapping) {
 
     const arrows = [
         [`key-${result.input}`, `pb-${result.input}-in`, "#4cc9f0", "arrowKbToPb"],
+
         [`pb-${result.input}-in`, `pb-${result.plugboard.in}-out`, "#4cf052ff", "arrowPbToPbIn"],
-        [`pb-${result.plugboard.in}-out`, `rotor3-${result.rotor3.in}`, "#4cf052ff", "arrowPbToRotor3"],
-        [`rotor3-${result.rotor3.in}`, `rotor2-${result.rotor2.in}`, "#575757ff", "arrowRotor3ToRotor2"],
-        [`rotor2-${result.rotor2.in}`, `rotor1-${result.rotor1.in}`, "#575757ff", "arrowRotor2ToRotor1"],
-        [`rotor1-${result.rotor1.in}`, `reflector-${result.reflector}`, "#575757ff", "arrowRotor1ToReflector"],
-        [`reflector-${result.reflector}`, `rotor1-${result.rotor1.out}`, "#7300d8ff", "arrowReflectorToRotor1"],
-        [`rotor1-${result.rotor1.out}`, `rotor2-${result.rotor2.out}`, "#575757ff", "arrowRotor1ToRotor2"],
-        [`rotor2-${result.rotor2.out}`, `rotor3-${result.rotor3.out}`, "#575757ff", "arrowRotor2ToRotor3"],
-        [`rotor3-${result.rotor3.out}`, `pb-${result.rotor3.out}-out`, "#575757ff", "arrowRotor3ToPb"],
+        [`pb-${result.plugboard.in}-out`, `rotor3-${result.plugboard.in}-out`, "#4cf052ff", "arrowPbToRotor3"],
+
+        [`rotor3-${result.plugboard.in}-out`, `rotor3-${result.rotor3.in}-in`, "#575757ff", "arrowRotor3ToRotor3"],
+        [`rotor3-${result.rotor3.in}-in`, `rotor2-${result.rotor3.in}-out`, "#575757ff", "arrowRotor3ToRotor2"],
+
+        [`rotor2-${result.rotor3.in}-out`, `rotor2-${result.rotor2.in}-in`, "#575757ff", "arrowRotor2ToRotor2"],
+        [`rotor2-${result.rotor2.in}-in`, `rotor1-${result.rotor2.in}-out`, "#575757ff", "arrowRotor2ToRotor1"],
+
+        [`rotor1-${result.rotor2.in}-out`, `rotor1-${result.rotor1.in}-in`, "#575757ff", "arrowRotor1ToRotor1"],
+        [`rotor1-${result.rotor1.in}-in`, `reflector-${result.rotor1.in}-out`, "#575757ff", "arrowRotor1ToReflector"],
+
+        [`reflector-${result.rotor1.in}-out`, `reflector-${result.reflector}-in`, "#7300d8ff", "arrowReflectorToReflector"],
+        [`reflector-${result.reflector}-in`, `reflector-${result.reflector}-out`, "#7300d8ff", "arrowReflectorToReflectorBack"],
+        [`reflector-${result.reflector}-out`, `rotor1-${result.reflector}-in`, "#7300d8ff", "arrowReflectorToRotor1"],
+
+        [`rotor1-${result.reflector}-in`, `rotor1-${result.rotor1.out}-out`, "#575757ff", "arrowRotor1ToRotor1Back"],
+        [`rotor1-${result.rotor1.out}-out`, `rotor2-${result.rotor1.out}-in`, "#575757ff", "arrowRotor1ToRotor2"],
+
+        [`rotor2-${result.rotor1.out}-in`, `rotor2-${result.rotor2.out}-out`, "#575757ff", "arrowRotor2ToRotor2Back"],
+        [`rotor2-${result.rotor2.out}-out`, `rotor3-${result.rotor2.out}-in`, "#575757ff", "arrowRotor2ToRotor3"],
+
+        [`rotor3-${result.rotor2.out}-in`, `rotor3-${result.rotor3.out}-out`, "#575757ff", "arrowRotor3ToRotor3Back"],
+        [`rotor3-${result.rotor3.out}-out`, `pb-${result.rotor3.out}-out`, "#575757ff", "arrowRotor3ToPb"],
+
         [`pb-${result.rotor3.out}-out`, `pb-${result.plugboard.out}-in`, "#4cf052ff", "arrowPbToPbOut"],
         [`pb-${result.plugboard.out}-in`, `lampboard-${result.plugboard.out}`, "#4cf052ff", "arrowPbToLampboard"]
     ];
@@ -687,7 +704,7 @@ function startAnimation(text, pbMapping) {
     function animateArrow(index) {
         if (index >= arrows.length) return;
         const [fromId, toId, color, arrowId] = arrows[index];
-        if (index < 6) {
+        if (index < 10) {
             drawUpArrow(fromId, toId, color, arrowId, 500, () => {
                 animateArrow(index + 1);
             });
@@ -818,7 +835,7 @@ async function lightOnOffAnim(letter) {
 
 
 const width =1200;
-const height = 800;
+const height = 1122;
 const keySize = 35;
 const spacing = 5;
 
@@ -869,6 +886,32 @@ svg.append("defs").append("marker")
     .attr("fill", "#4cf052ff");
 
 svg.append("defs").append("marker")
+    .attr("id", "arrowRotor3ToRotor3")
+    .attr("viewBox", "0 0 10 10")
+    .attr("refX", 10)
+    .attr("refY", 5)
+    .attr("markerWidth", 6)
+    .attr("markerHeight", 6)
+    .attr("markerUnits", "strokeWidth")
+    .attr("orient", "auto")
+    .append("path")
+    .attr("d", "M 0 0 L 10 5 L 0 10 z")
+    .attr("fill", "#575757ff");
+
+svg.append("defs").append("marker")
+    .attr("id", "arrowRotor3ToRotor3Back")
+    .attr("viewBox", "0 0 10 10")
+    .attr("refX", 10)
+    .attr("refY", 5)
+    .attr("markerWidth", 6)
+    .attr("markerHeight", 6)
+    .attr("markerUnits", "strokeWidth")
+    .attr("orient", "auto")
+    .append("path")
+    .attr("d", "M 0 0 L 10 5 L 0 10 z")
+    .attr("fill", "#575757ff");
+
+svg.append("defs").append("marker")
     .attr("id", "arrowRotor3ToRotor2")
     .attr("viewBox", "0 0 10 10")
     .attr("refX", 10)
@@ -882,7 +925,60 @@ svg.append("defs").append("marker")
     .attr("fill", "#575757ff");
 
 svg.append("defs").append("marker")
+    .attr("id", "arrowRotor2ToRotor2")
+    .attr("viewBox", "0 0 10 10")
+    .attr("refX", 10)
+    .attr("refY", 5)
+    .attr("markerWidth", 6)
+    .attr("markerHeight", 6)
+    .attr("markerUnits", "strokeWidth")
+    .attr("orient", "auto")
+    .append("path")
+    .attr("d", "M 0 0 L 10 5 L 0 10 z")
+    .attr("fill", "#575757ff");
+
+svg.append("defs").append("marker")
+    .attr("id", "arrowRotor2ToRotor2Back")
+    .attr("viewBox", "0 0 10 10")
+    .attr("refX", 10)
+    .attr("refY", 5)
+    .attr("markerWidth", 6)
+    .attr("markerHeight", 6)
+    .attr("markerUnits", "strokeWidth")
+    .attr("orient", "auto")
+    .append("path")
+    .attr("d", "M 0 0 L 10 5 L 0 10 z")
+    .attr("fill", "#575757ff");
+
+
+svg.append("defs").append("marker")
     .attr("id", "arrowRotor2ToRotor1")
+    .attr("viewBox", "0 0 10 10")
+    .attr("refX", 10)
+    .attr("refY", 5)
+    .attr("markerWidth", 6)
+    .attr("markerHeight", 6)
+    .attr("markerUnits", "strokeWidth")
+    .attr("orient", "auto")
+    .append("path")
+    .attr("d", "M 0 0 L 10 5 L 0 10 z")
+    .attr("fill", "#575757ff");
+
+svg.append("defs").append("marker")
+    .attr("id", "arrowRotor1ToRotor1")
+    .attr("viewBox", "0 0 10 10")
+    .attr("refX", 10)
+    .attr("refY", 5)
+    .attr("markerWidth", 6)
+    .attr("markerHeight", 6)
+    .attr("markerUnits", "strokeWidth")
+    .attr("orient", "auto")
+    .append("path")
+    .attr("d", "M 0 0 L 10 5 L 0 10 z")
+    .attr("fill", "#575757ff");
+
+svg.append("defs").append("marker")
+    .attr("id", "arrowRotor1ToRotor1Back")
     .attr("viewBox", "0 0 10 10")
     .attr("refX", 10)
     .attr("refY", 5)
@@ -906,6 +1002,32 @@ svg.append("defs").append("marker")
     .append("path")
     .attr("d", "M 0 0 L 10 5 L 0 10 z")
     .attr("fill", "#575757ff");
+
+svg.append("defs").append("marker")
+    .attr("id", "arrowReflectorToReflector")
+    .attr("viewBox", "0 0 10 10")
+    .attr("refX", 10)
+    .attr("refY", 5)
+    .attr("markerWidth", 6)
+    .attr("markerHeight", 6)
+    .attr("markerUnits", "strokeWidth")
+    .attr("orient", "auto")
+    .append("path")
+    .attr("d", "M 0 0 L 10 5 L 0 10 z")
+    .attr("fill", "#7300d8ff");
+
+svg.append("defs").append("marker")
+    .attr("id", "arrowReflectorToReflectorBack")
+    .attr("viewBox", "0 0 10 10")
+    .attr("refX", 10)
+    .attr("refY", 5)
+    .attr("markerWidth", 6)
+    .attr("markerHeight", 6)
+    .attr("markerUnits", "strokeWidth")
+    .attr("orient", "auto")
+    .append("path")
+    .attr("d", "M 0 0 L 10 5 L 0 10 z")
+    .attr("fill", "#7300d8ff");
 
 svg.append("defs").append("marker")
     .attr("id", "arrowReflectorToRotor1")
@@ -986,13 +1108,13 @@ svg.append("defs").append("marker")
     .attr("fill", "#4cf052ff");
 
 const components = {
-            keyboard: { x: 0, y: 550, width: 400, height: 175, cols: 13 },
-            plugboard: { x: 0, y: 360, width: 900, height: 175, cols: 13 },
-            rotor3: { x: 0, y: 273, width: 900, height: 72 },
-            rotor2: { x: 0, y: 186, width: 900, height: 72 },
-            rotor1: { x: 0, y: 99, width: 900, height: 72 },
-            reflector: { x: 0, y: 10, width: 900, height: 72 },
-            lampboard: { x: 500, y: 550, width: 400, height: 175, cols: 13 }
+            keyboard: { x: 0, y: 947, width: 400, height: 175, cols: 13 },
+            plugboard: { x: 0, y: 760, width: 900, height: 175, cols: 13 },
+            rotor3: { x: 0, y: 573, width: 900, height: 175 },
+            rotor2: { x: 0, y: 386, width: 900, height: 175 },
+            rotor1: { x: 0, y: 199, width: 900, height: 175 },
+            reflector: { x: 0, y: 10, width: 900, height: 175 },
+            lampboard: { x: 500, y: 947, width: 400, height: 175, cols: 13 }
         };
 
 const rotor1Component = components.rotor1
@@ -1022,10 +1144,28 @@ rotor1Section.append("text")
 
 letters.forEach((letter, i) => {
     const x = i * (keySize-2)+20;
-    const y = 30;
+    const y = (keySize+spacing);
     const rotor1Letter = rotor1Section.append("g")
                     .attr("class", "key-node")
-                    .attr("id", `rotor1-${letter}`)
+                    .attr("id", `rotor1-${letter}-in`)
+                    .attr("transform", `translate(${x}, ${y})`);
+
+    rotor1Letter.append("text")
+        .attr("x", keySize/2)
+        .attr("y", keySize/2 + 5)
+        .attr("text-anchor", "middle")
+        .attr("fill", "black")
+        .attr("font-weight", "bold")
+        .attr("font-size", "16px")
+        .text(letter);
+});
+
+letters.forEach((letter, i) => {
+    const x = i * (keySize-2)+20;
+    const y = 2 * (keySize+spacing) + 45;
+    const rotor1Letter = rotor1Section.append("g")
+                    .attr("class", "key-node")
+                    .attr("id", `rotor1-${letter}-out`)
                     .attr("transform", `translate(${x}, ${y})`);
 
     rotor1Letter.append("text")
@@ -1065,10 +1205,28 @@ rotor2Section.append("text")
 
 letters.forEach((letter, i) => {
     const x = i * (keySize-2)+20;
-    const y = 30;
+    const y = (keySize+spacing);
     const rotor2Letter = rotor2Section.append("g")
                     .attr("class", "key-node")
-                    .attr("id", `rotor2-${letter}`)
+                    .attr("id", `rotor2-${letter}-in`)
+                    .attr("transform", `translate(${x}, ${y})`);
+
+    rotor2Letter.append("text")
+        .attr("x", keySize/2)
+        .attr("y", keySize/2 + 5)
+        .attr("text-anchor", "middle")
+        .attr("fill", "black")
+        .attr("font-weight", "bold")
+        .attr("font-size", "16px")
+        .text(letter);
+});
+
+letters.forEach((letter, i) => {
+    const x = i * (keySize-2)+20;
+    const y = 2 * (keySize+spacing) + 45;
+    const rotor2Letter = rotor2Section.append("g")
+                    .attr("class", "key-node")
+                    .attr("id", `rotor2-${letter}-out`)
                     .attr("transform", `translate(${x}, ${y})`);
 
     rotor2Letter.append("text")
@@ -1108,10 +1266,28 @@ rotor3Section.append("text")
 
 letters.forEach((letter, i) => {
     const x = i * (keySize-2)+20;
-    const y = 30;
+    const y = (keySize+spacing);
     const rotor3Letter = rotor3Section.append("g")
                     .attr("class", "key-node")
-                    .attr("id", `rotor3-${letter}`)
+                    .attr("id", `rotor3-${letter}-in`)
+                    .attr("transform", `translate(${x}, ${y})`);
+
+    rotor3Letter.append("text")
+        .attr("x", keySize/2)
+        .attr("y", keySize/2 + 5)
+        .attr("text-anchor", "middle")
+        .attr("fill", "black")
+        .attr("font-weight", "bold")
+        .attr("font-size", "16px")
+        .text(letter);
+});
+
+letters.forEach((letter, i) => {
+    const x = i * (keySize-2)+20;
+    const y = 2 * (keySize+spacing) + 45;
+    const rotor3Letter = rotor3Section.append("g")
+                    .attr("class", "key-node")
+                    .attr("id", `rotor3-${letter}-out`)
                     .attr("transform", `translate(${x}, ${y})`);
 
     rotor3Letter.append("text")
@@ -1152,10 +1328,10 @@ reflectorSection.append("text")
 
 letters.forEach((letter, i) => {
     const x = i * (keySize-2)+20;
-    const y = 30;
+    const y = (keySize+spacing);
     const reflectorLetter = reflectorSection.append("g")
                     .attr("class", "key-node")
-                    .attr("id", `reflector-${letter}`)
+                    .attr("id", `reflector-${letter}-in`)
                     .attr("transform", `translate(${x}, ${y})`);
 
     reflectorLetter.append("text")
@@ -1167,6 +1343,25 @@ letters.forEach((letter, i) => {
         .attr("font-size", "16px")
         .text(letter);
 });
+
+letters.forEach((letter, i) => {
+    const x = i * (keySize-2)+20;
+    const y = 2 * (keySize+spacing) + 45;
+    const reflectorLetter = reflectorSection.append("g")
+                    .attr("class", "key-node")
+                    .attr("id", `reflector-${letter}-out`)
+                    .attr("transform", `translate(${x}, ${y})`);
+
+    reflectorLetter.append("text")
+        .attr("x", keySize/2)
+        .attr("y", keySize/2 + 5)
+        .attr("text-anchor", "middle")
+        .attr("fill", "black")
+        .attr("font-weight", "bold")
+        .attr("font-size", "16px")
+        .text(letter);
+});
+
 
 
 const kb = components.keyboard;
