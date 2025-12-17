@@ -4,6 +4,7 @@ const port = 5000
 let selected = [];
 let pairings = [];
 let usedColors = [];
+let pbMaps = [];
 
 const rotor1 = document.getElementById("rotor-1");
 const rotor2 = document.getElementById("rotor-2");
@@ -242,14 +243,12 @@ function rotorPosOverlay() {
 
             rotor1Option = rotor1Select.value;
             rotor1Notch = rotors.find(r=>r.val === rotor1Select.value).notch;
-            console.log(rotor1Notch);
 
             rotor2Option = rotor2Select.value;
             rotor2Notch = rotors.find(r=>r.val === rotor2Select.value).notch;
 
             rotor3Option = rotor3Select.value;
             rotor3Notch = rotors.find(r=>r.val === rotor3Select.value).notch;
-            console.log(rotor3Select.value);
             overlay.remove();
         }
     });
@@ -466,9 +465,9 @@ pairs.forEach(pair => {
             return;
         }
 
-        // console.log(selected);
+
         selected.push(pair);
-        // console.log(selected);
+
 
         pair.style.background = currentColor;
 
@@ -488,9 +487,9 @@ pairs.forEach(pair => {
             
             selected = [];
             usedColors.push(currentColor);
-            console.log(usedColors);
+
             currentColor = getColor();
-            console.log(currentColor);
+
         }
     });
 });
@@ -513,15 +512,13 @@ keys.forEach(key => {
         const letter = key.textContent;
         document.getElementById("input").textContent += letter;
 
-        console.log(ring1);
-        console.log(ring2);
-        console.log(ring3);
+
 
         var rotor1Pos = getRotorPosition(1);
         var rotor2Pos = getRotorPosition(2);
         var rotor3Pos = getRotorPosition(3);
 
-        console.log("sending to server with position:"+rotor1Pos+rotor2Pos+rotor3Pos)
+
 
         const encrypted = await sendToEnigmaPy(letter, rotor1Pos, rotor2Pos, rotor3Pos, rotor1Option, rotor2Option, rotor3Option, rotor1Notch, rotor2Notch, rotor3Notch);
         document.getElementById("output").textContent += encrypted;
@@ -573,6 +570,9 @@ async function sendToEnigmaPy(letter, rotor1Position, rotor2Position, rotor3Posi
     setRotorPosition(document.getElementById("rotor-2"), data.rotor2Pos);
     setRotorPosition(document.getElementById("rotor-3"), data.rotor3Pos);
 
+    console.log(data.pbMap);
+    pbMaps.push(data.pbMap);
+
     const formatted = data.steps.replace(/\n/g, "<br>");
     steps = data.steps;
     
@@ -592,7 +592,6 @@ async function sendToEnigmaPy(letter, rotor1Position, rotor2Position, rotor3Posi
     stepButton.innerHTML = "Show encryption path for "+count+".";
 
     stepButton.addEventListener("click", () => {
-        console.log("step "+stepButton.id+" clicked");
 
         const diagram = document.getElementById("viz");
         if (diagram) {
@@ -601,8 +600,8 @@ async function sendToEnigmaPy(letter, rotor1Position, rotor2Position, rotor3Posi
 
         const stepNumber = stepButton.id.split("-")[1];
         const stepText = document.getElementById(`step-${stepNumber}-text`).innerText;
-        console.log(stepText.replace(/^\d+\.\s*/, ""));
-        startAnimation(stepText.replace(/^\d+\.\s*/, ""));
+        console.log(pbMaps[stepNumber-1]);
+        startAnimation(stepText.replace(/^\d+\.\s*/, ""), pbMaps[stepNumber-1]);
         
     });
     
@@ -662,12 +661,13 @@ function parseSteps(text) {
     return result;
 }
 
-function startAnimation(text) {
-    console.log(text);
+function startAnimation(text, pbMapping) {
     const result = parseSteps(text);
-    console.log(result);
 
     svg.selectAll(".flow-arrow").remove();
+    svg.selectAll(".plugboard-connection").remove();
+
+    drawPbConnections(pbMapping);
 
     const arrows = [
         [`key-${result.input}`, `pb-${result.input}-in`, "#4cc9f0", "arrowKbToPb"],
@@ -687,12 +687,60 @@ function startAnimation(text) {
     function animateArrow(index) {
         if (index >= arrows.length) return;
         const [fromId, toId, color, arrowId] = arrows[index];
-        drawArrow(fromId, toId, color, arrowId, 500, () => {
-            animateArrow(index + 1);
-        });
+        if (index < 6) {
+            drawUpArrow(fromId, toId, color, arrowId, 500, () => {
+                animateArrow(index + 1);
+            });
+        } else {
+            drawDownArrow(fromId, toId, color, arrowId, 500, () => {
+                animateArrow(index + 1);
+            });
+        }
+        
     }
 
     animateArrow(0);
+}
+
+function drawPbConnections(pbMapping) {
+    const drawn = new Set();
+    var count = 0;
+    let colors = [
+        "#ff0000", "#ff8800", "#fff700", "#55ff00",
+        "#0000ff", "#9900ff", "#ff00ff", "#910101",
+        "#069101", "#018391", "#80003c", "#570080",
+        "#a47aff"
+    ];
+
+    letters.forEach(letter => {
+        if (drawn.has(letter)) return;
+        const pair = pbMapping[letter];
+        if (pair) {
+            drawPbLine(letter, pair, colors[count]);
+            drawPbLine(pair, letter, colors[count]);
+            drawn.add(letter);
+            drawn.add(pair);
+        } else {
+            drawPbLine(letter, letter, "#000000");
+            drawn.add(letter);
+        }
+        count++;
+    });
+}
+
+function drawPbLine(a, b, color) {
+    const from = getNodeCenter(`pb-${a}-in`);
+    const to = getNodeCenter(`pb-${b}-out`);
+
+    svg.append("line")
+        .attr("class", "plugboard-connection")
+        .attr("x1", from.x)
+        .attr("y1", from.y-10)
+        .attr("x2", to.x)
+        .attr("y2", to.y+10)
+        .attr("stroke", color)
+        .attr("stroke-width", 3)
+        .attr("opacity", 0.8);
 }
 
 function getNodeCenter(id) {
@@ -706,7 +754,7 @@ function getNodeCenter(id) {
     };
 }
 
-function drawArrow(fromId, toId, color, arrowId, duration = 1000, callback) {
+function drawUpArrow(fromId, toId, color, arrowId, duration = 1000, callback) {
     const p1 = getNodeCenter(fromId);
     const p2 = getNodeCenter(toId);
     const length = Math.hypot(p2.x - p1.x, p2.y - p1.y);
@@ -714,9 +762,35 @@ function drawArrow(fromId, toId, color, arrowId, duration = 1000, callback) {
     const line = svg.append("line")
         .attr("class", "flow-arrow")
         .attr("x1", p1.x)
-        .attr("y1", p1.y)
+        .attr("y1", p1.y-10)
         .attr("x2", p2.x)
-        .attr("y2", p2.y)
+        .attr("y2", p2.y+10)
+        .attr("stroke", color)
+        .attr("stroke-width", 3)
+        .attr("stroke-dasharray", length)
+        .attr("stroke-dashoffset", length);
+
+    line.transition()
+        .duration(duration)
+        .ease(d3.easeLinear)
+        .attr("stroke-dashoffset", 0)
+        .on("end", () => {
+            line.attr("marker-end", `url(#${arrowId})`);
+            if (callback) callback();
+        });
+}
+
+function drawDownArrow(fromId, toId, color, arrowId, duration = 1000, callback) {
+    const p1 = getNodeCenter(fromId);
+    const p2 = getNodeCenter(toId);
+    const length = Math.hypot(p2.x - p1.x, p2.y - p1.y);
+
+    const line = svg.append("line")
+        .attr("class", "flow-arrow")
+        .attr("x1", p1.x)
+        .attr("y1", p1.y+10)
+        .attr("x2", p2.x)
+        .attr("y2", p2.y-10)
         .attr("stroke", color)
         .attr("stroke-width", 3)
         .attr("stroke-dasharray", length)
