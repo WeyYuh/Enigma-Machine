@@ -750,17 +750,28 @@ function drawPbLine(a, b, color) {
     const from = getNodeCenter(`pb-${a}-in`);
     const to = getNodeCenter(`pb-${b}-out`);
 
-    svg.append("line")
+    if (color !== "#000000") {
+        svg.append("line")
         .attr("class", "plugboard-connection-outline")
         .attr("x1", from.x)
         .attr("y1", from.y - 10)
         .attr("x2", to.x)
         .attr("y2", to.y + 10)
         .attr("stroke", "#000")      
-        .attr("stroke-width", 4.25)     
+        .attr("stroke-width", 3)     
         .attr("opacity", 0.9);
 
-    svg.append("line")
+        svg.append("line")
+        .attr("class", "plugboard-connection")
+        .attr("x1", from.x)
+        .attr("y1", from.y-10)
+        .attr("x2", to.x)
+        .attr("y2", to.y+10)
+        .attr("stroke", color)
+        .attr("stroke-width", 2.5)
+        .attr("opacity", 0.8);
+    } else {
+        svg.append("line")
         .attr("class", "plugboard-connection")
         .attr("x1", from.x)
         .attr("y1", from.y-10)
@@ -769,6 +780,9 @@ function drawPbLine(a, b, color) {
         .attr("stroke", color)
         .attr("stroke-width", 3)
         .attr("opacity", 0.8);
+    }
+
+    
 }
 
 function getNodeCenter(id) {
