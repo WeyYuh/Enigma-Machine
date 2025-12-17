@@ -28,6 +28,9 @@ const rotors = [
     {"name": "Rotor IV", "val": "ESOVPZJAYQUIRHXLNFTGKDCMWB", "notch": "J"},
     {"name": "Rotor V", "val": "VZBRGITYUPSDNHLXAWMJQOFECK", "notch": "Z"},
 ];
+const reflectors = [
+    
+];
 const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 let currentIdx1 = 0;
 let currentIdx2 = 0;
@@ -61,9 +64,11 @@ function rotorPosOverlay() {
 
     const header = document.createElement("tr");
 
-    const headerDesc = document.createElement("th");
-    headerDesc.innerText = "Setting";
-    headerDesc.className = "table-header";
+    const reflectorCell = document.createElement("th");
+    reflectorCell.innerText = "Reflector";
+    const reflectorSelector = document.createElement("select");
+    reflectorCell.appendChild(reflectorSelector);
+    reflectorCell.className = "table-header";
 
     const headerRotor1 = document.createElement("th");
     headerRotor1.innerText = "Rotor 1";
@@ -77,7 +82,7 @@ function rotorPosOverlay() {
     headerRotor3.innerText = "Rotor 3";
     headerRotor3.className = "table-header";
 
-    header.appendChild(headerDesc);
+    header.appendChild(reflectorCell);
     header.appendChild(headerRotor1);
     header.appendChild(headerRotor2);
     header.appendChild(headerRotor3);
