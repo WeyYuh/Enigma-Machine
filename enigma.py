@@ -24,6 +24,14 @@ class Rotor:
         for i, v in enumerate(self.forward_map):
             self.reverse_map[v] = i
 
+    def effective_wiring(self):
+        mapping = {}
+        for letter in ALPHABET:
+            out = self.encode_forward(ALPHABET.index(letter))
+            mapping[letter] = out
+        return mapping
+
+
     def step(self):
         # function for rotor to increase by 1
         self.pos = (self.pos + 1) % len(ALPHABET)

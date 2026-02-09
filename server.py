@@ -45,7 +45,18 @@ def encrypt():
     encrypted = machine.encrypt_char(char)
     steps = machine.encrypt_steps
     rotorsPos = machine.get_rotors_pos()
-    return jsonify({"cipher": encrypted, "rotor1Pos": rotorsPos[0], "rotor2Pos": rotorsPos[1], "rotor3Pos": rotorsPos[2], "steps": steps, "pbMap": PLUGBOARD_MAPPING})
+    return jsonify({
+        "cipher": encrypted,
+        "rotor1Pos": rotorsPos[0],
+        "rotor2Pos": rotorsPos[1],
+        "rotor3Pos": rotorsPos[2],
+        "steps": steps,
+        "pbMap": PLUGBOARD_MAPPING,
+        "rotor1Map": machine.left.effective_wiring(),
+        "rotor2Map": machine.mid.effective_wiring(),
+        "rotor3Map": machine.right.effective_wiring(),
+        "reflectorMap": machine.reflector.map
+        })
 
 @app.post("/plugboard")
 def plugboard():

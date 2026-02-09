@@ -5,6 +5,11 @@ let selected = [];
 let pairings = [];
 let usedColors = [];
 let pbMaps = [];
+let rotor1Maps = [];
+let rotor2Maps = [];
+let rotor3Maps = [];
+let reflectorMaps = [];
+let animIndex = 0;
 
 const rotor1 = document.getElementById("rotor-1");
 const rotor2 = document.getElementById("rotor-2");
@@ -572,6 +577,10 @@ async function sendToEnigmaPy(letter, rotor1Position, rotor2Position, rotor3Posi
 
     console.log(data.pbMap);
     pbMaps.push(data.pbMap);
+    rotor1Maps.push(data.rotor1Map);
+    rotor2Maps.push(data.rotor2Map);
+    rotor3Maps.push(data.rotor3Map);
+    reflectorMaps.push(data.reflectorMap);
 
     const formatted = data.steps.replace(/\n/g, "<br>");
     steps = data.steps;
@@ -600,8 +609,9 @@ async function sendToEnigmaPy(letter, rotor1Position, rotor2Position, rotor3Posi
 
         const stepNumber = stepButton.id.split("-")[1];
         const stepText = document.getElementById(`step-${stepNumber}-text`).innerText;
-        console.log(pbMaps[stepNumber-1]);
-        startAnimation(stepText.replace(/^\d+\.\s*/, ""), pbMaps[stepNumber-1]);
+        // console.log(pbMaps[stepNumber-1]);
+        console.log(rotor3Maps[stepNumber-1]);
+        startAnimation(stepText.replace(/^\d+\.\s*/, ""), pbMaps[stepNumber-1], rotor1Maps[stepNumber-1], rotor2Maps[stepNumber-1], rotor3Maps[stepNumber-1], reflectorMaps[stepNumber-1]);
         
     });
     
@@ -661,17 +671,119 @@ function parseSteps(text) {
     return result;
 }
 
-let animIndex = 0;
+function drawRotor1Connections(rotor1Mapping) {
+    const colors = ["#E6194B", "#3CB44B", "#FFE119", "#0082C8", "#F58230", "#911EB4", "#46F0F0", "#F032E6", "#D2F53C",
+        "#FABED4", "#008080", "#DCBEFF", "#AA6E28", "#FFFAC8", "#800000", "#AAFFC3", "#808000", "#FFD7B4", "#000080",
+        "#808080", "#FFFFFF", "#000000", "#FFB6C1", "#6495ED", "#9ACD32", "#4B0082"
+    ];
+    for (const [key, value] of Object.entries(rotor1Mapping)) {
+        drawRotorLine(key, letters[value], 1, colors[value]);
+    }
+}
 
-function startAnimation(text, pbMapping) {
+function drawRotor2Connections(rotor2Mapping) {
+    const colors = ["#E6194B", "#3CB44B", "#FFE119", "#0082C8", "#F58230", "#911EB4", "#46F0F0", "#F032E6", "#D2F53C",
+        "#FABED4", "#008080", "#DCBEFF", "#AA6E28", "#FFFAC8", "#800000", "#AAFFC3", "#808000", "#FFD7B4", "#000080",
+        "#808080", "#FFFFFF", "#000000", "#FFB6C1", "#6495ED", "#9ACD32", "#4B0082"
+    ];
+
+    for (const [key, value] of Object.entries(rotor2Mapping)) {
+        drawRotorLine(key, letters[value], 2, colors[value]);
+    }
+}
+
+function drawRotor3Connections(rotor3Mapping) {
+    const colors = ["#E6194B", "#3CB44B", "#FFE119", "#0082C8", "#F58230", "#911EB4", "#46F0F0", "#F032E6", "#D2F53C",
+        "#FABED4", "#008080", "#DCBEFF", "#AA6E28", "#FFFAC8", "#800000", "#AAFFC3", "#808000", "#FFD7B4", "#000080",
+        "#808080", "#FFFFFF", "#000000", "#FFB6C1", "#6495ED", "#9ACD32", "#4B0082"
+    ];
+
+    for (const [key, value] of Object.entries(rotor3Mapping)) {
+        drawRotorLine(key, letters[value], 3, colors[value]);
+    }
+}
+
+function drawRotorLine(a, b, rotorId, color) {
+    const from = getNodeCenter(`rotor${rotorId}-${a}-out`);
+    const to = getNodeCenter(`rotor${rotorId}-${b}-in`);
+
+    svg.append("line")
+        .attr("class", "rotor-connection-outline")
+        .attr("x1", from.x)
+        .attr("y1", from.y - 10)
+        .attr("x2", to.x)
+        .attr("y2", to.y + 10)
+        .attr("stroke", "#000")      
+        .attr("stroke-width", 3)     
+        .attr("opacity", 1);
+
+    svg.append("line")
+        .attr("class", "rotor-connection")
+        .attr("x1", from.x)
+        .attr("y1", from.y-10)
+        .attr("x2", to.x)
+        .attr("y2", to.y+10)
+        .attr("stroke", color)  
+        .attr("stroke-width", 2.5)
+        .attr("opacity", 1);
+}
+
+function drawReflectorConnections(reflectorMapping) {
+    const colors = ["#E6194B", "#3CB44B", "#FFE119", "#0082C8", "#F58230", "#911EB4", "#46F0F0", "#F032E6", "#D2F53C",
+        "#FABED4", "#008080", "#DCBEFF", "#AA6E28", "#FFFAC8", "#800000", "#AAFFC3", "#808000", "#FFD7B4", "#000080",
+        "#808080", "#FFFFFF", "#000000", "#FFB6C1", "#6495ED", "#9ACD32", "#4B0082"
+    ];
+
+    for (const [key, value] of Object.entries(reflectorMapping)) {
+        drawReflectorLine(letters[key], letters[value], colors[value]);
+    }
+}
+
+function drawReflectorLine(a, b, color) {
+    console.log(`reflector-${a}-out`);
+    console.log(`reflector-${b}-in`);
+    const from = getNodeCenter(`reflector-${a}-out`);
+    const to = getNodeCenter(`reflector-${b}-in`);
+
+    svg.append("line")
+        .attr("class", "rotor-connection-outline")
+        .attr("x1", from.x)
+        .attr("y1", from.y - 10)
+        .attr("x2", to.x)
+        .attr("y2", to.y + 10)
+        .attr("stroke", "#000")      
+        .attr("stroke-width", 3)     
+        .attr("opacity", 1);
+
+    svg.append("line")
+        .attr("class", "rotor-connection")
+        .attr("x1", from.x)
+        .attr("y1", from.y-10)
+        .attr("x2", to.x)
+        .attr("y2", to.y+10)
+        .attr("stroke", color)  
+        .attr("stroke-width", 2.5)
+        .attr("opacity", 1);
+}
+
+function startAnimation(text, pbMapping, rotor1Mapping, rotor2Mapping, rotor3Mapping, reflectorMapping) {
     animIndex++;
     const currAnimIdx = animIndex;
     const result = parseSteps(text);
 
     svg.selectAll(".flow-arrow").remove();
     svg.selectAll(".plugboard-connection").remove();
+    svg.selectAll(".plugboard-connection-outline").remove();
+    svg.selectAll(".rotor-connection").remove();
+    svg.selectAll(".rotor-connection-outline").remove();
+    svg.selectAll(".reflector-connection-outline").remove();
+    svg.selectAll(".reflector-connection").remove();
 
     drawPbConnections(pbMapping);
+    drawRotor1Connections(rotor1Mapping);
+    drawRotor2Connections(rotor2Mapping);
+    drawRotor3Connections(rotor3Mapping);
+    drawReflectorConnections(reflectorMapping);
 
     const arrows = [
         [`key-${result.input}`, `pb-${result.input}-in`, "#4cc9f0", "arrowKbToPb"],
