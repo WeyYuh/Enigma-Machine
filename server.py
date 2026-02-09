@@ -33,6 +33,7 @@ def encrypt():
     rotor1Pos = data["rotor1Pos"]
     rotor2Pos = data["rotor2Pos"]
     rotor3Pos = data["rotor3Pos"]
+    reflectorOption = data["reflector"]
 
     left = Rotor(rotor1, rotor1Notch, ring_setting=ring1, position=rotor1Pos)
     mid = Rotor(rotor2, rotor2Notch, ring_setting=ring2, position=rotor2Pos)
@@ -40,7 +41,7 @@ def encrypt():
 
     plugboard = Plugboard(PLUGBOARD_MAPPING)
 
-    reflector = Reflector(REFLECTOR)
+    reflector = Reflector(reflectorOption)
     machine = Enigma([left, mid, right], reflector, plugboard, verbose=False)
     encrypted = machine.encrypt_char(char)
     steps = machine.encrypt_steps

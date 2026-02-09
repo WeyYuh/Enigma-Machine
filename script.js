@@ -23,6 +23,7 @@ var rotor3Notch = "V";
 var ring1 = 0;
 var ring2 = 0;
 var ring3 = 0;
+var reflectorOption = "YRUHQSLDPXNGOKMIEBFZCWVJAT";
 var steps = "";
 var count = 1;
 
@@ -35,7 +36,9 @@ const rotors = [
     {"name": "Rotor V", "val": "VZBRGITYUPSDNHLXAWMJQOFECK", "notch": "Z"},
 ];
 const reflectors = [
-    
+    {"name": "UKW-A", "val": "EJMZALYXVBWFCRQUONTSPIKHGD"},
+    {"name": "UKW-B", "val": "YRUHQSLDPXNGOKMIEBFZCWVJAT"},
+    {"name": "UKW-C", "val": "FVPJIAOYEDRZXWGCTKUQSBNMHL"},
 ];
 const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 let currentIdx1 = 0;
@@ -73,6 +76,14 @@ function rotorPosOverlay() {
     const reflectorCell = document.createElement("th");
     reflectorCell.innerText = "Reflector";
     const reflectorSelector = document.createElement("select");
+    reflectorSelector.id = "reflector-option";
+    for (let reflector of reflectors) {
+        var opt = document.createElement("option");
+        opt.value = reflector.val;
+        opt.innerHTML = reflector.name;
+        reflectorSelector.appendChild(opt);
+    }
+    reflectorSelector.value = reflectorOption;
     reflectorCell.appendChild(reflectorSelector);
     reflectorCell.className = "table-header";
 
@@ -139,7 +150,6 @@ function rotorPosOverlay() {
     rotorSetting.appendChild(rotor1Cell);
     rotorSetting.appendChild(rotor2Cell);
     rotorSetting.appendChild(rotor3Cell);
-
 
     const ringSetting = document.createElement("tr");
     ringSetting.className = "ring-setting-section";
@@ -254,6 +264,8 @@ function rotorPosOverlay() {
 
             rotor3Option = rotor3Select.value;
             rotor3Notch = rotors.find(r=>r.val === rotor3Select.value).notch;
+
+            reflectorOption = reflectorSelector.value;
             overlay.remove();
         }
     });
@@ -525,7 +537,7 @@ keys.forEach(key => {
 
 
 
-        const encrypted = await sendToEnigmaPy(letter, rotor1Pos, rotor2Pos, rotor3Pos, rotor1Option, rotor2Option, rotor3Option, rotor1Notch, rotor2Notch, rotor3Notch);
+        const encrypted = await sendToEnigmaPy(letter, rotor1Pos, rotor2Pos, rotor3Pos, rotor1Option, rotor2Option, rotor3Option, rotor1Notch, rotor2Notch, rotor3Notch, reflectorOption);
         document.getElementById("output").textContent += encrypted;
 
         lightOnOffAnim(encrypted.toLowerCase());
@@ -541,7 +553,7 @@ document.addEventListener("keydown", async function (e) {
         var rotor2Pos = getRotorPosition(2);
         var rotor3Pos = getRotorPosition(3);
 
-        const encrypted = await sendToEnigmaPy(letter, rotor1Pos, rotor2Pos, rotor3Pos, rotor1Option, rotor2Option, rotor3Option, rotor1Notch, rotor2Notch, rotor3Notch);
+        const encrypted = await sendToEnigmaPy(letter, rotor1Pos, rotor2Pos, rotor3Pos, rotor1Option, rotor2Option, rotor3Option, rotor1Notch, rotor2Notch, rotor3Notch, reflectorOption);
 
         document.getElementById("output").textContent += encrypted;
         
@@ -549,7 +561,7 @@ document.addEventListener("keydown", async function (e) {
     }
 });
 
-async function sendToEnigmaPy(letter, rotor1Position, rotor2Position, rotor3Position, rotor1, rotor2, rotor3, rotor1Notch, rotor2Notch, rotor3Notch) {
+async function sendToEnigmaPy(letter, rotor1Position, rotor2Position, rotor3Position, rotor1, rotor2, rotor3, rotor1Notch, rotor2Notch, rotor3Notch, reflectorOption) {
     const res = await fetch(`${url}:${port}/encrypt`, {
         method: "POST",
         headers: {"Content-Type": "application/json"},
@@ -566,7 +578,8 @@ async function sendToEnigmaPy(letter, rotor1Position, rotor2Position, rotor3Posi
             rotor3Notch: rotor3Notch,
             rotor1Pos: rotor1Position, 
             rotor2Pos: rotor2Position,
-            rotor3Pos: rotor3Position})
+            rotor3Pos: rotor3Position,
+            reflector: reflectorOption})
     });
 
     const data = await res.json();
