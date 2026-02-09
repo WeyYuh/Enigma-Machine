@@ -661,7 +661,11 @@ function parseSteps(text) {
     return result;
 }
 
+let animIndex = 0;
+
 function startAnimation(text, pbMapping) {
+    animIndex++;
+    const currAnimIdx = animIndex;
     const result = parseSteps(text);
 
     svg.selectAll(".flow-arrow").remove();
@@ -702,6 +706,7 @@ function startAnimation(text, pbMapping) {
     ];
 
     function animateArrow(index) {
+        if (animIndex !== currAnimIdx) return; 
         if (index >= arrows.length) return;
         const [fromId, toId, color, arrowId] = arrows[index];
         if (index < 10) {
