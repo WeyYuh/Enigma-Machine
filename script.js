@@ -62,8 +62,6 @@ for (let i = -1; i <= 1; i++) {
     rotor3.appendChild(div);
 }
 
-sendPlugboardToEnigma();
-
 function rotorPosOverlay() {
     const overlay = document.createElement("div");
     overlay.className = "overlay";
@@ -470,7 +468,6 @@ pairs.forEach(pair => {
             usedColors = usedColors.filter(c => c !== existingPair.color);
             currentColor = existingPair.color;
             selected = selected.filter(el => el !== elementA && el !== elementB);
-            sendPlugboardToEnigma();
             return;
         } else if (existingPair && selected.length === 1) {
             return;
@@ -499,8 +496,6 @@ pairs.forEach(pair => {
             
 
             pairings.push(mapping);
-
-            sendPlugboardToEnigma();
             
             selected = [];
             usedColors.push(currentColor);
@@ -510,18 +505,6 @@ pairs.forEach(pair => {
         }
     });
 });
-
-async function sendPlugboardToEnigma() {
-    try {
-        await fetch(`${url}:${port}/plugboard`, {
-            method:"POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify(pairings)
-        });
-    } catch (e) {
-        console.error("Error sending:", e);
-    }
-}
 
 const keys = document.querySelectorAll(".key");
 keys.forEach(key => {
@@ -562,6 +545,8 @@ document.addEventListener("keydown", async function (e) {
 });
 
 async function sendToEnigmaPy(letter, rotor1Position, rotor2Position, rotor3Position, rotor1, rotor2, rotor3, rotor1Notch, rotor2Notch, rotor3Notch, reflectorOption) {
+    console.log(pairings);
+    
     const res = await fetch(`${url}:${port}/encrypt`, {
         method: "POST",
         headers: {"Content-Type": "application/json"},
@@ -579,7 +564,9 @@ async function sendToEnigmaPy(letter, rotor1Position, rotor2Position, rotor3Posi
             rotor1Pos: rotor1Position, 
             rotor2Pos: rotor2Position,
             rotor3Pos: rotor3Position,
-            reflector: reflectorOption})
+            reflector: reflectorOption,
+            plugboardMap: pairings
+        })
     });
 
     const data = await res.json();
@@ -588,7 +575,6 @@ async function sendToEnigmaPy(letter, rotor1Position, rotor2Position, rotor3Posi
     setRotorPosition(document.getElementById("rotor-2"), data.rotor2Pos);
     setRotorPosition(document.getElementById("rotor-3"), data.rotor3Pos);
 
-    console.log(data.pbMap);
     pbMaps.push(data.pbMap);
     rotor1Maps.push(data.rotor1Map);
     rotor2Maps.push(data.rotor2Map);
@@ -622,8 +608,8 @@ async function sendToEnigmaPy(letter, rotor1Position, rotor2Position, rotor3Posi
 
         const stepNumber = stepButton.id.split("-")[1];
         const stepText = document.getElementById(`step-${stepNumber}-text`).innerText;
-        // console.log(pbMaps[stepNumber-1]);
-        console.log(rotor3Maps[stepNumber-1]);
+
+
         startAnimation(stepText.replace(/^\d+\.\s*/, ""), pbMaps[stepNumber-1], rotor1Maps[stepNumber-1], rotor2Maps[stepNumber-1], rotor3Maps[stepNumber-1], reflectorMaps[stepNumber-1]);
         
     });
@@ -753,8 +739,6 @@ function drawReflectorConnections(reflectorMapping) {
 }
 
 function drawReflectorLine(a, b, color) {
-    console.log(`reflector-${a}-out`);
-    console.log(`reflector-${b}-in`);
     const from = getNodeCenter(`reflector-${a}-out`);
     const to = getNodeCenter(`reflector-${b}-in`);
 

@@ -12,7 +12,7 @@ ROTOR_2_STEP = "E"
 ROTOR_3 = "BDFHJLCPRTXVZNYEIWGAKMUSQO"
 ROTOR_3_STEP = "V"
 REFLECTOR = "YRUHQSLDPXNGOKMIEBFZCWVJAT"
-PLUGBOARD_MAPPING = {}
+
 
 
 
@@ -34,12 +34,20 @@ def encrypt():
     rotor2Pos = data["rotor2Pos"]
     rotor3Pos = data["rotor3Pos"]
     reflectorOption = data["reflector"]
+    raw_plugboard_mapping = data["plugboardMap"]
+
+    plugboard_map = {}
+    for pair in raw_plugboard_mapping:
+        a = pair["from"].upper()
+        b = pair["to"].upper()
+        plugboard_map[a] = b
+        plugboard_map[b] = a
 
     left = Rotor(rotor1, rotor1Notch, ring_setting=ring1, position=rotor1Pos)
     mid = Rotor(rotor2, rotor2Notch, ring_setting=ring2, position=rotor2Pos)
     right = Rotor(rotor3, rotor3Notch, ring_setting=ring3, position=rotor3Pos)
 
-    plugboard = Plugboard(PLUGBOARD_MAPPING)
+    plugboard = Plugboard(plugboard_map)
 
     reflector = Reflector(reflectorOption)
     machine = Enigma([left, mid, right], reflector, plugboard, verbose=False)
@@ -52,26 +60,11 @@ def encrypt():
         "rotor2Pos": rotorsPos[1],
         "rotor3Pos": rotorsPos[2],
         "steps": steps,
-        "pbMap": PLUGBOARD_MAPPING,
+        "pbMap": plugboard_map,
         "rotor1Map": machine.left.effective_wiring(),
         "rotor2Map": machine.mid.effective_wiring(),
         "rotor3Map": machine.right.effective_wiring(),
         "reflectorMap": machine.reflector.map
         })
-
-@app.post("/plugboard")
-def plugboard():
-    global PLUGBOARD_MAPPING
-    data = request.get_json()
-
-    PLUGBOARD_MAPPING = {}
-
-    for pair in data:
-        a = pair["from"].upper()
-        b = pair["to"].upper()
-        PLUGBOARD_MAPPING[a] = b
-        PLUGBOARD_MAPPING[b] = a
-
-    return jsonify({"status": "ok"})
 
 app.run(port=5000)
