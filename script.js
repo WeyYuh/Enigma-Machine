@@ -34,6 +34,9 @@ const rotors = [
     {"name": "Rotor III", "val": "BDFHJLCPRTXVZNYEIWGAKMUSQO", "notch": "V"},
     {"name": "Rotor IV", "val": "ESOVPZJAYQUIRHXLNFTGKDCMWB", "notch": "J"},
     {"name": "Rotor V", "val": "VZBRGITYUPSDNHLXAWMJQOFECK", "notch": "Z"},
+    {"name": "Rotor VI", "val": "JPGVOUMFYQBENHZRDKASXLICTW", "notch": "ZM"},
+    {"name": "Rotor VII", "val": "NZJHGRCXMYSWBOUFAIVLPEKQDT", "notch": "ZM"},
+    {"name": "Rotor VIII", "val": "FKQHTLXOCBJSPDZRAMEWNIUYGV", "notch": "ZM"},
 ];
 const reflectors = [
     {"name": "UKW-A", "val": "EJMZALYXVBWFCRQUONTSPIKHGD"},
