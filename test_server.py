@@ -165,7 +165,6 @@ def test_encrypt_missing_some_fields_3(client):
 
     expected_missing_fields = ["char", "ring1", "ring2", "ring3",
         "rotor1", "rotor2",
-        
         "rotor3Pos"]
     
     response = client.post("/encrypt", json=payload)
