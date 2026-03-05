@@ -182,7 +182,7 @@ ROTOR_3 = "BDFHJLCPRTXVZNYEIWGAKMUSQO"
 ROTOR_3_STEP = "V"
 REFLECTOR = "YRUHQSLDPXNGOKMIEBFZCWVJAT"
 
-if __name__ == '__main__':
+if __name__ == '__main__': # pragma: no cover
 
     parser = argparse.ArgumentParser(description="Enigma Machine Simulator")
     parser.add_argument("-v", "--verbose", action="store_true", help="Show rotor mapping as encryption/decryption happens")

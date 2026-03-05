@@ -20,6 +20,22 @@ REFLECTOR = "YRUHQSLDPXNGOKMIEBFZCWVJAT"
 def encrypt():
     
     data = request.get_json()
+
+    required_fields = [
+        "char", "ring1", "ring2", "ring3",
+        "rotor1", "rotor2", "rotor3",
+        "rotor1Notch", "rotor2Notch", "rotor3Notch",
+        "rotor1Pos", "rotor2Pos", "rotor3Pos",
+        "reflector", "plugboardMap"
+    ]
+    missing_fields = []
+
+    for field in required_fields:
+        if field not in data:
+            missing_fields.append(field)
+    if len(missing_fields) > 0:
+        return {"error": f"Missing fields: {missing_fields}"}, 400
+    
     char = data["char"]
     ring1 = data['ring1']
     ring2 = data['ring2']
@@ -67,4 +83,5 @@ def encrypt():
         "reflectorMap": machine.reflector.map
         })
 
-app.run(port=5000)
+if __name__ == "__main__": # pragma: no cover
+    app.run(port=5000)
