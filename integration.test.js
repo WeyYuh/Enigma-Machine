@@ -45,6 +45,24 @@ describe("Enigma Machine Simulator HTML Integration Test", ()=>{
     });
 
     test("plugboard pairs exist with right labels", () => {
-        const pairs = document.querySelectorAll(".pair")
+        const pairs = document.querySelectorAll(".plugboard .pair");
+        expect(pairs.length).toBe(26);
+        const labels = Array.from(pairs).map(p=>p.dataset.label);
+        expect(labels).toEqual(expect.arrayContaining("ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")));
+    });
+
+    test("input/output section content is correct", () => {
+        expect(document.getElementById("input")).toBeInTheDocument();
+        expect(document.getElementById("output")).toBeInTheDocument();
+        expect(document.getElementById("clear-btn")).toBeInTheDocument();
+    });
+
+    test("steps section is rendered correctly", () => {
+        expect(document.getElementById("steps-btn")).toBeInTheDocument();
+        expect(document.getElementById("steps")).toBeInTheDocument();
+    });
+
+    test("enigma machine diagram rendered", () => {
+        expect(document.getElementById("viz")).toBeInTheDocument();
     });
 });
