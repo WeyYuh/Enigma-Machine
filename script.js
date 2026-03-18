@@ -678,9 +678,31 @@ function parseSteps(text) {
 }
 
 function drawRotor1Connections(rotor1Mapping) {
-    const colors = ["#E6194B", "#3CB44B", "#FFE119", "#0082C8", "#F58230", "#911EB4", "#46F0F0", "#F032E6", "#D2F53C",
-        "#FABED4", "#008080", "#DCBEFF", "#AA6E28", "#FFFAC8", "#800000", "#AAFFC3", "#808000", "#FFD7B4", "#000080",
-        "#808080", "#FFFFFF", "#000000", "#FFB6C1", "#6495ED", "#9ACD32", "#4B0082"
+    const colors = ["#FF4D4D",
+            "#4DFF4D", 
+            "#FFD24D", 
+            "#4DA6FF", 
+            "#FF944D", 
+            "#B84DFF", 
+            "#4DFFFF", 
+            "#FF4DDA", 
+            "#DFFF4D", 
+            "#FFC0CB",
+            "#33CCCC", 
+            "#E6CCFF",
+            "#CC9966", 
+            "#FFFF99", 
+            "#FF6666", 
+            "#99FFCC", 
+            "#CCCC33",
+            "#FFCC99",
+            "#6699FF", 
+            "#B3B3B3", 
+            "#FFFFFF", 
+            "#FF99CC", 
+            "#99CCFF", 
+            "#CCFF66", 
+            "#CC66FF"
     ];
     for (const [key, value] of Object.entries(rotor1Mapping)) {
         drawRotorLine(key, letters[value], 1, colors[value]);
@@ -688,9 +710,31 @@ function drawRotor1Connections(rotor1Mapping) {
 }
 
 function drawRotor2Connections(rotor2Mapping) {
-    const colors = ["#E6194B", "#3CB44B", "#FFE119", "#0082C8", "#F58230", "#911EB4", "#46F0F0", "#F032E6", "#D2F53C",
-        "#FABED4", "#008080", "#DCBEFF", "#AA6E28", "#FFFAC8", "#800000", "#AAFFC3", "#808000", "#FFD7B4", "#000080",
-        "#808080", "#FFFFFF", "#000000", "#FFB6C1", "#6495ED", "#9ACD32", "#4B0082"
+    const colors = ["#FF4D4D",
+            "#4DFF4D", 
+            "#FFD24D", 
+            "#4DA6FF", 
+            "#FF944D", 
+            "#B84DFF", 
+            "#4DFFFF", 
+            "#FF4DDA", 
+            "#DFFF4D", 
+            "#FFC0CB",
+            "#33CCCC", 
+            "#E6CCFF",
+            "#CC9966", 
+            "#FFFF99", 
+            "#FF6666", 
+            "#99FFCC", 
+            "#CCCC33",
+            "#FFCC99",
+            "#6699FF", 
+            "#B3B3B3", 
+            "#FFFFFF", 
+            "#FF99CC", 
+            "#99CCFF", 
+            "#CCFF66", 
+            "#CC66FF"
     ];
 
     for (const [key, value] of Object.entries(rotor2Mapping)) {
@@ -699,9 +743,31 @@ function drawRotor2Connections(rotor2Mapping) {
 }
 
 function drawRotor3Connections(rotor3Mapping) {
-    const colors = ["#E6194B", "#3CB44B", "#FFE119", "#0082C8", "#F58230", "#911EB4", "#46F0F0", "#F032E6", "#D2F53C",
-        "#FABED4", "#008080", "#DCBEFF", "#AA6E28", "#FFFAC8", "#800000", "#AAFFC3", "#808000", "#FFD7B4", "#000080",
-        "#808080", "#FFFFFF", "#000000", "#FFB6C1", "#6495ED", "#9ACD32", "#4B0082"
+    const colors = ["#FF4D4D",
+            "#4DFF4D", 
+            "#FFD24D", 
+            "#4DA6FF", 
+            "#FF944D", 
+            "#B84DFF", 
+            "#4DFFFF", 
+            "#FF4DDA", 
+            "#DFFF4D", 
+            "#FFC0CB",
+            "#33CCCC", 
+            "#E6CCFF",
+            "#CC9966", 
+            "#FFFF99", 
+            "#FF6666", 
+            "#99FFCC", 
+            "#CCCC33",
+            "#FFCC99",
+            "#6699FF", 
+            "#B3B3B3", 
+            "#FFFFFF", 
+            "#FF99CC", 
+            "#99CCFF", 
+            "#CCFF66", 
+            "#CC66FF"
     ];
 
     for (const [key, value] of Object.entries(rotor3Mapping)) {
@@ -710,64 +776,61 @@ function drawRotor3Connections(rotor3Mapping) {
 }
 
 function drawRotorLine(a, b, rotorId, color) {
-    const from = getNodeCenter(`rotor${rotorId}-${a}-out`);
-    const to = getNodeCenter(`rotor${rotorId}-${b}-in`);
+    const from = document.querySelector(`#rotor${rotorId}-${a}-out text`);
+    const to = document.querySelector(`#rotor${rotorId}-${b}-in text`);
 
-    svg.append("line")
-        .attr("class", "rotor-connection-outline")
-        .attr("x1", from.x)
-        .attr("y1", from.y - 10)
-        .attr("x2", to.x)
-        .attr("y2", to.y + 10)
-        .attr("stroke", "#000")      
-        .attr("stroke-width", 3)     
-        .attr("opacity", 1);
-
-    svg.append("line")
-        .attr("class", "rotor-connection")
-        .attr("x1", from.x)
-        .attr("y1", from.y-10)
-        .attr("x2", to.x)
-        .attr("y2", to.y+10)
-        .attr("stroke", color)  
-        .attr("stroke-width", 2.5)
-        .attr("opacity", 1);
+    from.setAttribute("fill", color);
+    from.setAttribute("stroke", "black");
+    from.setAttribute("stroke-width", "0.4");
+    to.setAttribute("fill", color);
+    to.setAttribute("stroke", "black");
+    to.setAttribute("stroke-width", "0.4");
 }
 
 function drawReflectorConnections(reflectorMapping) {
-    const colors = ["#E6194B", "#3CB44B", "#FFE119", "#0082C8", "#F58230", "#911EB4", "#46F0F0", "#F032E6", "#D2F53C",
-        "#FABED4", "#008080", "#DCBEFF", "#AA6E28", "#FFFAC8", "#800000", "#AAFFC3", "#808000", "#FFD7B4", "#000080",
-        "#808080", "#FFFFFF", "#000000", "#FFB6C1", "#6495ED", "#9ACD32", "#4B0082"
+    const colors = ["#FF4D4D",
+            "#4DFF4D", 
+            "#FFD24D", 
+            "#4DA6FF", 
+            "#FF944D", 
+            "#B84DFF", 
+            "#4DFFFF", 
+            "#FF4DDA", 
+            "#DFFF4D", 
+            "#FFC0CB",
+            "#33CCCC", 
+            "#E6CCFF",
+            "#CC9966", 
+            "#FFFF99", 
+            "#FF6666", 
+            "#99FFCC", 
+            "#CCCC33",
+            "#FFCC99",
+            "#6699FF", 
+            "#B3B3B3", 
+            "#FFFFFF", 
+            "#FF99CC", 
+            "#99CCFF", 
+            "#CCFF66", 
+            "#CC66FF"
     ];
 
     for (const [key, value] of Object.entries(reflectorMapping)) {
         drawReflectorLine(letters[key], letters[value], colors[value]);
+        drawReflectorLine(letters[value], letters[key], colors[value]);
     }
 }
 
 function drawReflectorLine(a, b, color) {
-    const from = getNodeCenter(`reflector-${a}-out`);
-    const to = getNodeCenter(`reflector-${b}-in`);
+    const from = document.querySelector(`#reflector-${a}-out text`);
+    const to = document.querySelector(`#reflector-${b}-in text`);
 
-    svg.append("line")
-        .attr("class", "rotor-connection-outline")
-        .attr("x1", from.x)
-        .attr("y1", from.y - 10)
-        .attr("x2", to.x)
-        .attr("y2", to.y + 10)
-        .attr("stroke", "#000")      
-        .attr("stroke-width", 3)     
-        .attr("opacity", 1);
-
-    svg.append("line")
-        .attr("class", "rotor-connection")
-        .attr("x1", from.x)
-        .attr("y1", from.y-10)
-        .attr("x2", to.x)
-        .attr("y2", to.y+10)
-        .attr("stroke", color)  
-        .attr("stroke-width", 2.5)
-        .attr("opacity", 1);
+    from.setAttribute("fill", color);
+    from.setAttribute("stroke", "black");
+    from.setAttribute("stroke-width", "0.4");
+    to.setAttribute("fill", color);
+    to.setAttribute("stroke", "black");
+    to.setAttribute("stroke-width", "0.4");
 }
 
 function startAnimation(text, pbMapping, rotor1Mapping, rotor2Mapping, rotor3Mapping, reflectorMapping) {
@@ -782,6 +845,21 @@ function startAnimation(text, pbMapping, rotor1Mapping, rotor2Mapping, rotor3Map
     svg.selectAll(".rotor-connection-outline").remove();
     svg.selectAll(".reflector-connection-outline").remove();
     svg.selectAll(".reflector-connection").remove();
+    svg.selectAll(".key-node rect")
+        .attr("fill", "#eee")
+        .attr("stroke", "#000");
+
+    svg.selectAll(".key-node text")
+        .attr("fill", "#000");
+
+    keyPressText = document.querySelector(`#key-${result.input} text`);
+    keyPressRect = document.querySelector(`#key-${result.input} rect`);
+    keyPressRect.setAttribute("fill", "#000");
+    keyPressRect.setAttribute("stroke", "#eee");
+    keyPressText.setAttribute("fill", "#eee");
+
+    lampRect = document.querySelector(`#lampboard-${result.plugboard.out} rect`);
+    lampRect.setAttribute("fill", "#edde05");
 
     drawPbConnections(pbMapping);
     drawRotor1Connections(rotor1Mapping);
@@ -843,66 +921,62 @@ function startAnimation(text, pbMapping, rotor1Mapping, rotor2Mapping, rotor3Map
 function drawPbConnections(pbMapping) {
     const drawn = new Set();
     var count = 0;
-    let colors = [
-        "#ff0000", "#ff8800", "#fff700", "#55ff00",
-        "#0000ff", "#9900ff", "#ff00ff", "#910101",
-        "#069101", "#018391", "#80003c", "#570080",
-        "#a47aff"
+    const colors = ["#FF4D4D",
+            "#4DFF4D", 
+            "#FFD24D", 
+            "#4DA6FF", 
+            "#FF944D", 
+            "#B84DFF", 
+            "#4DFFFF", 
+            "#FF4DDA", 
+            "#DFFF4D", 
+            "#FFC0CB",
+            "#33CCCC", 
+            "#E6CCFF",
+            "#CC9966", 
+            "#FFFF99", 
+            "#FF6666", 
+            "#99FFCC", 
+            "#CCCC33",
+            "#FFCC99",
+            "#6699FF", 
+            "#B3B3B3", 
+            "#FFFFFF", 
+            "#FF99CC", 
+            "#99CCFF", 
+            "#CCFF66", 
+            "#CC66FF"
     ];
 
     letters.forEach(letter => {
         if (drawn.has(letter)) return;
         const pair = pbMapping[letter];
+        console.log(`${pair}, ${letter}`);
         if (pair) {
             drawPbLine(letter, pair, colors[count]);
             drawPbLine(pair, letter, colors[count]);
             drawn.add(letter);
             drawn.add(pair);
-            count++;
         } else {
-            drawPbLine(letter, letter, "#000000");
-            drawn.add(letter);
+            drawPbLine(letter, letter, colors[count]);
         }
+        count++;
+        
         
     });
 }
 
 function drawPbLine(a, b, color) {
-    const from = getNodeCenter(`pb-${a}-in`);
-    const to = getNodeCenter(`pb-${b}-out`);
 
-    if (color !== "#000000") {
-        svg.append("line")
-        .attr("class", "plugboard-connection-outline")
-        .attr("x1", from.x)
-        .attr("y1", from.y - 10)
-        .attr("x2", to.x)
-        .attr("y2", to.y + 10)
-        .attr("stroke", "#000")      
-        .attr("stroke-width", 3)     
-        .attr("opacity", 0.9);
+    const from = document.querySelector(`#pb-${a}-in text`);
+    const to = document.querySelector(`#pb-${b}-out text`);
 
-        svg.append("line")
-        .attr("class", "plugboard-connection")
-        .attr("x1", from.x)
-        .attr("y1", from.y-10)
-        .attr("x2", to.x)
-        .attr("y2", to.y+10)
-        .attr("stroke", color)
-        .attr("stroke-width", 2.5)
-        .attr("opacity", 0.8);
-    } else {
-        svg.append("line")
-        .attr("class", "plugboard-connection")
-        .attr("x1", from.x)
-        .attr("y1", from.y-10)
-        .attr("x2", to.x)
-        .attr("y2", to.y+10)
-        .attr("stroke", color)
-        .attr("stroke-width", 3)
-        .attr("opacity", 0.8);
-    }
-
+    from.setAttribute("fill", color);
+    from.setAttribute("stroke", "black");
+    from.setAttribute("stroke-width", "0.4");
+    to.setAttribute("fill", color);
+    to.setAttribute("stroke", "black");
+    to.setAttribute("stroke-width", "0.4");
     
 }
 
@@ -1565,8 +1639,8 @@ row1Letters.forEach((letter, i) => {
                     .attr("height", keySize)
                     .attr("rx", 5)
                     .attr("ry", 5)
-                    .attr("fill", "#4361ee")
-                    .attr("stroke", "#4cc9f0")
+                    .attr("fill", "#eee")
+                    .attr("stroke", "#000")
                     .attr("stroke-width", 2);
                 
     // Key letter
@@ -1574,7 +1648,7 @@ row1Letters.forEach((letter, i) => {
         .attr("x", keySize/2)
         .attr("y", keySize/2 + 5)
         .attr("text-anchor", "middle")
-        .attr("fill", "white")
+        .attr("fill", "#000")
         .attr("font-weight", "bold")
         .attr("font-size", "16px")
         .text(letter);
@@ -1597,8 +1671,8 @@ row2Letters.forEach((letter, i) => {
                     .attr("height", keySize)
                     .attr("rx", 5)
                     .attr("ry", 5)
-                    .attr("fill", "#4361ee")
-                    .attr("stroke", "#4cc9f0")
+                    .attr("fill", "#eee")
+                    .attr("stroke", "#000")
                     .attr("stroke-width", 2);
                 
     // Key letter
@@ -1606,7 +1680,7 @@ row2Letters.forEach((letter, i) => {
         .attr("x", keySize/2)
         .attr("y", keySize/2 + 5)
         .attr("text-anchor", "middle")
-        .attr("fill", "white")
+        .attr("fill", "#000")
         .attr("font-weight", "bold")
         .attr("font-size", "16px")
         .text(letter);
@@ -1629,8 +1703,8 @@ row3Letters.forEach((letter, i) => {
                     .attr("height", keySize)
                     .attr("rx", 5)
                     .attr("ry", 5)
-                    .attr("fill", "#4361ee")
-                    .attr("stroke", "#4cc9f0")
+                    .attr("fill", "#eee")
+                    .attr("stroke", "#000")
                     .attr("stroke-width", 2);
                 
     // Key letter
@@ -1638,7 +1712,7 @@ row3Letters.forEach((letter, i) => {
         .attr("x", keySize/2)
         .attr("y", keySize/2 + 5)
         .attr("text-anchor", "middle")
-        .attr("fill", "white")
+        .attr("fill", "#000")
         .attr("font-weight", "bold")
         .attr("font-size", "16px")
         .text(letter);
@@ -1683,7 +1757,7 @@ row1Letters.forEach((letter, i) => {
     const y = row * (keySize+spacing) + 45;
 
     const key = lampboardGroup.append("g")
-                    .attr("class", "key-node")
+                    .attr("class", "lamp-node")
                     .attr("id", `lampboard-${letter}`)
                     .attr("transform", `translate(${x}, ${y})`);
 
@@ -1692,8 +1766,8 @@ row1Letters.forEach((letter, i) => {
                     .attr("height", keySize)
                     .attr("rx", 5)
                     .attr("ry", 5)
-                    .attr("fill", "#4361ee")
-                    .attr("stroke", "#4cc9f0")
+                    .attr("fill", "#edde05")
+                    .attr("stroke", "#000")
                     .attr("stroke-width", 2);
                 
     // Key letter
@@ -1701,7 +1775,7 @@ row1Letters.forEach((letter, i) => {
         .attr("x", keySize/2)
         .attr("y", keySize/2 + 5)
         .attr("text-anchor", "middle")
-        .attr("fill", "white")
+        .attr("fill", "#000")
         .attr("font-weight", "bold")
         .attr("font-size", "16px")
         .text(letter);
@@ -1715,7 +1789,7 @@ row2Letters.forEach((letter, i) => {
     const y = row * (keySize+spacing) + 45;
 
     const key = lampboardGroup.append("g")
-                    .attr("class", "key-node")
+                    .attr("class", "lamp-node")
                     .attr("id", `lampboard-${letter}`)
                     .attr("transform", `translate(${x}, ${y})`);
 
@@ -1724,8 +1798,8 @@ row2Letters.forEach((letter, i) => {
                     .attr("height", keySize)
                     .attr("rx", 5)
                     .attr("ry", 5)
-                    .attr("fill", "#4361ee")
-                    .attr("stroke", "#4cc9f0")
+                    .attr("fill", "#edde05")
+                    .attr("stroke", "#000")
                     .attr("stroke-width", 2);
                 
     // Key letter
@@ -1733,7 +1807,7 @@ row2Letters.forEach((letter, i) => {
         .attr("x", keySize/2)
         .attr("y", keySize/2 + 5)
         .attr("text-anchor", "middle")
-        .attr("fill", "white")
+        .attr("fill", "#000")
         .attr("font-weight", "bold")
         .attr("font-size", "16px")
         .text(letter);
@@ -1747,7 +1821,7 @@ row3Letters.forEach((letter, i) => {
     const y = row * (keySize+spacing) + 45;
 
     const lamp = lampboardGroup.append("g")
-                    .attr("class", "key-node")
+                    .attr("class", "lamp-node")
                     .attr("id", `lampboard-${letter}`)
                     .attr("transform", `translate(${x}, ${y})`);
 
@@ -1756,8 +1830,8 @@ row3Letters.forEach((letter, i) => {
                     .attr("height", keySize)
                     .attr("rx", 5)
                     .attr("ry", 5)
-                    .attr("fill", "#4361ee")
-                    .attr("stroke", "#4cc9f0")
+                    .attr("fill", "#edde05")
+                    .attr("stroke", "#000")
                     .attr("stroke-width", 2);
                 
     // Key letter
@@ -1765,7 +1839,7 @@ row3Letters.forEach((letter, i) => {
         .attr("x", keySize/2)
         .attr("y", keySize/2 + 5)
         .attr("text-anchor", "middle")
-        .attr("fill", "white")
+        .attr("fill", "#000")
         .attr("font-weight", "bold")
         .attr("font-size", "16px")
         .text(letter);
