@@ -605,6 +605,10 @@ async function sendToEnigmaPy(letter, rotor1Position, rotor2Position, rotor3Posi
     stepButton.addEventListener("click", () => {
 
         const diagram = document.getElementById("viz");
+        if (diagram.style.display === "none") {
+            diagram.style.display = "block";
+        }
+        
         if (diagram) {
             diagram.scrollIntoView({behavior: "smooth", block: "start"});
         }
