@@ -10,10 +10,15 @@ let rotor2Maps = [];
 let rotor3Maps = [];
 let reflectorMaps = [];
 let animIndex = 0;
+var rotor1, rotor2, rotor3;
 
-const rotor1 = document.getElementById("rotor-1");
-const rotor2 = document.getElementById("rotor-2");
-const rotor3 = document.getElementById("rotor-3");
+function initRotorElements() {
+    if (!rotor1) rotor1 = document.getElementById("rotor-1") || document.createElement('div');
+    if (!rotor2) rotor2 = document.getElementById("rotor-2") || document.createElement('div');
+    if (!rotor3) rotor3 = document.getElementById("rotor-3") || document.createElement('div');
+}
+
+initRotorElements();
 var rotor1Option = "EKMFLGDQVZNTOWYHXUSPAIBRCJ";
 var rotor2Option = "AJDKSIRUXBLHWTMCQGZNPYFVOE";
 var rotor3Option = "BDFHJLCPRTXVZNYEIWGAKMUSQO";
@@ -1908,3 +1913,4 @@ letters.forEach((letter, i) => {
         .attr("font-size", "16px")
         .text(letter);
 });
+
