@@ -443,6 +443,17 @@ function getColor() {
 document.getElementById("clear-btn").addEventListener("click", () => {
     document.getElementById("input").textContent = "";
     document.getElementById("output").textContent = "";
+    const diagram = document.getElementById("viz");
+    diagram.style.display = "none";
+
+    const elements = document.querySelectorAll(".step-class");
+    elements.forEach(el => el.remove());
+
+    if (document.getElementById("steps").innerText === "") {
+        document.getElementById("steps").innerText = "Encryption steps will appear here...";
+    }
+
+    count = 1;
 });
 
 const stepsBtn = document.getElementById("steps-btn");
@@ -598,6 +609,7 @@ async function sendToEnigmaPy(letter, rotor1Position, rotor2Position, rotor3Posi
 
     let stepDetails = document.createElement("div");
     stepDetails.id = "step-"+count+"-section";
+    stepDetails.className = "step-class";
     
     let stepText = document.createElement("p");
     stepText.id = "step-"+count+"-text";
@@ -822,7 +834,6 @@ function drawReflectorConnections(reflectorMapping) {
 
     for (const [key, value] of Object.entries(reflectorMapping)) {
         drawReflectorLine(letters[key], letters[value], colors[value]);
-        drawReflectorLine(letters[value], letters[key], colors[value]);
     }
 }
 
@@ -851,6 +862,10 @@ function startAnimation(text, pbMapping, rotor1Mapping, rotor2Mapping, rotor3Map
     svg.selectAll(".reflector-connection-outline").remove();
     svg.selectAll(".reflector-connection").remove();
     svg.selectAll(".key-node rect")
+        .attr("fill", "#eee")
+        .attr("stroke", "#000");
+
+    svg.selectAll(".lamp-node rect")
         .attr("fill", "#eee")
         .attr("stroke", "#000");
 
@@ -924,7 +939,6 @@ function startAnimation(text, pbMapping, rotor1Mapping, rotor2Mapping, rotor3Map
 }
 
 function drawPbConnections(pbMapping) {
-    const drawn = new Set();
     var count = 0;
     const colors = ["#FF4D4D",
             "#4DFF4D", 
@@ -954,14 +968,10 @@ function drawPbConnections(pbMapping) {
     ];
 
     letters.forEach(letter => {
-        if (drawn.has(letter)) return;
         const pair = pbMapping[letter];
         console.log(`${pair}, ${letter}`);
         if (pair) {
             drawPbLine(letter, pair, colors[count]);
-            drawPbLine(pair, letter, colors[count]);
-            drawn.add(letter);
-            drawn.add(pair);
         } else {
             drawPbLine(letter, letter, colors[count]);
         }
@@ -1771,7 +1781,7 @@ row1Letters.forEach((letter, i) => {
                     .attr("height", keySize)
                     .attr("rx", 5)
                     .attr("ry", 5)
-                    .attr("fill", "#edde05")
+                    .attr("fill", "#eee")
                     .attr("stroke", "#000")
                     .attr("stroke-width", 2);
                 
@@ -1803,7 +1813,7 @@ row2Letters.forEach((letter, i) => {
                     .attr("height", keySize)
                     .attr("rx", 5)
                     .attr("ry", 5)
-                    .attr("fill", "#edde05")
+                    .attr("fill", "#eee")
                     .attr("stroke", "#000")
                     .attr("stroke-width", 2);
                 
@@ -1835,7 +1845,7 @@ row3Letters.forEach((letter, i) => {
                     .attr("height", keySize)
                     .attr("rx", 5)
                     .attr("ry", 5)
-                    .attr("fill", "#edde05")
+                    .attr("fill", "#eee")
                     .attr("stroke", "#000")
                     .attr("stroke-width", 2);
                 
