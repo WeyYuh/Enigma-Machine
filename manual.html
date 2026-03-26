@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enigma Machine Simulator</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link rel="stylesheet" href="manual_style.css">
+</head>
+<body>
+<div class="manual-wrapper">
+    <!-- Sidebar with bookmarks (chapters) -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <a href="index.html" class="home-button" id="homeButton">
+                <span class="home-icon">⬅️</span>
+                <span>Back</span>
+            </a>
+        </div>
+        <ul class="bookmark-nav" id="bookmark-list">
+            <li><a href="#intro" class="bookmark-link"><span class="bookmark-icon">🔰</span>1. Introduction</a></li>
+            <li><a href="#getting-started" class="bookmark-link"><span class="bookmark-icon">🚀</span>2. Getting Started</a></li>
+            <li><a href="#core-components" class="bookmark-link"><span class="bookmark-icon">⚙️</span>3. Core Components</a></li>
+            <li><a href="#how-to-use" class="bookmark-link"><span class="bookmark-icon">⌨️</span>4. How to Use</a></li>
+            <li><a href="#features" class="bookmark-link"><span class="bookmark-icon">✨</span>5. Key Features</a></li>
+            <li><a href="#glossary" class="bookmark-link"><span class="bookmark-icon">📚</span>6. Glossary</a></li>
+        </ul>
+        <div style="margin-top: 2rem; font-size: 0.7rem; color:#b49a78; padding-top: 1rem; border-top: 1px dashed #e0cfbf;">
+            <span> Enigma Simulator </span><br>
+        </div>
+    </aside>
+
+    <!-- Main content: full manual chapters -->
+    <main class="main-content">
+        <h1>Enigma Simulator <span style="font-weight: 400;">— user manual</span></h1>
+        
+        <!-- Chapter 1: Introduction -->
+        <section id="intro">
+            <h2>1. Introduction</h2>
+            <h3>What is the Enigma Machine?</h3>
+            <p>The Enigma machine was a cipher device used extensively by Germany during World War II to protect commercial, diplomatic, 
+                and military communication. Its security came from the complex, changing electrical pathway created by its mechanical
+                 components: a keyboard, a lampboard, rotors, a reflector, and a plugboard. Its most crucial property was that it was
+                  <strong>symmetrical</strong>: if you type a letter with the machine in a given configuration, a different letter lights
+                   up. If you then type that resulting letter with the <em>exact same</em> machine configuration, you get the original 
+                   letter back. This made encryption and decryption the same process.</p>
+            <h3>About This Simulator</h3>
+            <p>This web-based simulator provides a fully functional, virtual Enigma machine. It allows you to replicate historical
+                 Enigma models, experiment with rotor wirings, understand inner workings, and encrypt/decrypt messages just like
+                  a WWII operator.</p>
+        </section>
+
+        <!-- Chapter 2: Getting Started -->
+        <section id="getting-started">
+            <h2>2. Getting Started</h2>
+            <h3>Accessing the Simulator</h3>
+            <p>1. Install prerequisites using <code>pip install -r requirement.txt</code></p>
+            <p>2. Run the python file using <code>python3 server.py</code></p>
+            <p>Navigate to <code>index.html</code> in any browser. No account is required.</p>
+            <h3>Interface Overview</h3>
+            <p>The simulator is divided into four main sections:</p>
+            <ul>
+                <li><strong>Enigma Machine Panel:</strong> A: rotors, B: lampboard, C: keyboard and D: plugboard.</li>
+                <img src="panel.png" width="600" height="auto" alt="enigma machine panel">
+                <li><strong>Configuration Panel:</strong> Rotor and reflector selection, ring settings, rotor positions.</li>
+                <img src="config.png" width="600" height="auto" alt="configuration panel">
+                <li><strong>Message Input/Output:</strong> Text area for long messages and cipher output.</li>
+                <img src="input_output.png" width="600" height="auto" alt="input output box">
+                <li><strong>Walkthrough of the encryption steps:</strong> A diagram showing the encryption process at each step.</li>
+                <img src="diagram.png" width="600" height="auto" alt="enigma diagram">
+            </ul>
+        </section>
+
+        <!-- Chapter 3: Core Components -->
+        <section id="core-components">
+            <h2>3. Core Components</h2>
+            <h3>The Keyboard & Lampboard</h3>
+            <p>Click keys on the website or type directly to input letters. Each key press lights a letter on the lampboard — that's your output character.</p>
+            <h3>The Rotors</h3>
+            <p>Each rotor is a disc with 26 scrambled contacts. You select rotor types (I, II, III, IV, V, etc.) and order (left, middle, right). The rotor windows show current position, which changes with every keystroke.</p>
+            <h3>The Reflector</h3>
+            <p>A static component at the end of the rotor stack. It redirects the signal back through the rotors, ensuring the machine is symmetric. Select reflector type (A, B or C).</p>
+            <h3>The Plugboard</h3>
+            <p>Allows swapping letter pairs before the signal enters the rotors. Click two letters to create a swap (e.g., <code>A ↔ Z</code>). Up to 13 pairs can be made.</p>
+        </section>
+
+        <!-- Chapter 4: How to Use -->
+        <section id="how-to-use">
+            <h2>4. How to Use the Simulator</h2>
+            <h3>Step 1: Setting Up Your Machine</h3>
+            <p>Both communicating parties need identical settings. To do this, you need to click on any of the three rotors:</p>
+            <img src="rotor.png" width="300" height="auto" alt="rotor panel">
+            <p>This will open up a configuration allowing you to set the following:</p>
+            <img src="config.png" width="600" height="auto" alt="config panel">
+            <ol>
+                <li><strong>Select Rotors:</strong> Choose types and order (left=rotor 1, middle=rotor 2, right=rotor 3).</li>
+                <li><strong>Set Ring Settings:</strong> Adjust ring letters for each rotor.</li>
+                <li><strong>Set Initial Positions:</strong> Rotor start letters shown in window.</li>
+                <li><strong>Select Reflector:</strong> Choose matching reflector type.</li>
+            </ol>
+            <p>After setting the rotors, you can now set up the plugboard:</p>
+            <ol>
+                <li><strong>Select first letter:</strong> select the first letter of the plugboard pair by clicking on the black button on the plugboard..</li>
+                <li><strong>Select second letter:</strong> select the letter to swap with the first letter by clicking on the black button on the plugboard.</li>
+            </ol>
+            <p>Members of a pairing will share the same color and no other characters can have the same color. As shown in the image below,
+                <code>A ↔ Z</code> are colored red and <code>P ↔ H</code> are colored orange.
+            </p>
+            <img src="plugboard.png" width="600" height="auto" alt="plugboard">
+            <div class="note-box">
+                <strong>Note:</strong> The order of selecting the plugboard pair doesn't matter. For <code>A ↔ Z</code>, selecting
+                A first then Z yields the same result as selecting Z first then A.
+            </div>
+
+            <h3>Step 2: Encrypting / Decrypting a Message</h3>
+            <p>Click keyboard keys or type directly; the lampboard shows each cipher letter and automatically writes the letter to the output area. <strong>Important:</strong> decryption works identically — set machine to the same starting configuration and input ciphertext to recover plaintext.</p>
+            <h3>Step 3: Look at the state of the enigma machine at each encryption step</h3>
+            <p>Click <code>Show steps</code> button. This will expand the section and give details on what happens:</p>
+            <img src="steps.png" width="600" height="auto" alt="show steps button">
+            <p>Click <code>Show encryption path for x.</code> where x is the step you want to see. </p>
+            <img src="step.png" width="600" height="auto" alt="detailed step button">
+            <p>This shows a diagram of the state of enigma machine at that step. Full rotor mappings are shown through distinct color pairings.
+                For example, in the diagram, rotor 3's H and Q have the same color, so input from plugboard H will output Q from rotor 3.
+            </p>
+            <img src="diagram.png" width="600" height="auto" alt="enigma diagram">
+        </section>
+
+        <!-- Chapter 5: Key Features Explained -->
+        <section id="features">
+            <h2>5. Key Features Explained</h2>
+            <h3>Automatic Key Advance</h3>
+            <p>Each keypress advances the rightmost rotor by one step. When a rotor completes a full turn, it triggers the rotor to its left. This creates the polyalphabetic cipher effect.</p>
+            <h3>Ring Settings</h3>
+            <p>Ring settings offset the rotor wiring relative to the alphabet ring. Part of the daily key, they influence turnover position.</p>
+            <h3>Initial Rotor Positions</h3>
+            <p>The starting letters visible in the rotor windows. In historical practice, the operator chose a random message key and transmitted it encrypted at the beginning.</p>
+            <h3>Enigma Machine diagram for any given step</h3>
+            <p>The diagram shows the state of the enigma machine, how the rotors are wiring, how encryption letter changes at each point, and explain why the machine is symmetric</p>
+        </section>
+
+        <!-- Chapter 6: Glossary -->
+        <section id="glossary">
+            <h2>6. Glossary of Terms</h2>
+            <table>
+                <thead>
+                    <tr><th>Term</th><th>Definition</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td class="glossary-term">Ciphertext</td><td>The encrypted, unreadable output of the Enigma machine.</td></tr>
+                    <tr><td class="glossary-term">Enigma Key</td><td>Complete set of machine settings (rotor order, ring settings, initial positions, plugboard, reflector).</td></tr>
+                    <tr><td class="glossary-term">Grundstellung</td><td>Initial positions of the rotors shown in the rotor windows.</td></tr>
+                    <tr><td class="glossary-term">Plaintext</td><td>The original readable message before encryption.</td></tr>
+                    <tr><td class="glossary-term">Plugboard</td><td>Panel that swaps pairs of letters to increase security.</td></tr>
+                    <tr><td class="glossary-term">Reflector</td><td>Static component that directs signal back, making machine self-inverse.</td></tr>
+                    <tr><td class="glossary-term">Ring Setting (Ringstellung)</td><td>Offset of rotor's internal wiring relative to outer ring.</td></tr>
+                    <tr><td class="glossary-term">Rotor (Walze)</td><td>Rotating disc with scrambled wiring providing primary encryption.</td></tr>
+                    <tr><td class="glossary-term">Turnover</td><td>The point at which a rotor advances the rotor to its left.</td></tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+</div>
+
+    <script src="manual_script.js" defer></script>
+</body>
+</html>
