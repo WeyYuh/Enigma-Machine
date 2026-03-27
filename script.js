@@ -531,9 +531,6 @@ keys.forEach(key => {
     key.addEventListener('click', async () => {
         const letter = key.textContent;
         setInputText(letter);
-        // document.getElementById("input").textContent += letter;
-
-
 
         var rotor1Pos = getRotorPosition(1);
         var rotor2Pos = getRotorPosition(2);
@@ -552,8 +549,6 @@ document.addEventListener("keydown", async function (e) {
     if (e.key.length === 1 && e.key.match(/[a-zA-Z]/)) {
         const letter = e.key.toUpperCase();
         setInputText(letter);
-        // document.getElementById("input").textContent += letter;
-
         var rotor1Pos = getRotorPosition(1);
         var rotor2Pos = getRotorPosition(2);
         var rotor3Pos = getRotorPosition(3);
@@ -646,7 +641,6 @@ async function sendToEnigmaPy(letter, rotor1Position, rotor2Position, rotor3Posi
     stepDetails.append(stepText);
     stepDetails.append(stepButton);
     document.getElementById("steps-section").insertBefore(stepDetails, document.getElementById("viz"));
-    // document.getElementById("steps-section").append(stepDetails);
 
     count++; 
     return data.cipher;
@@ -660,7 +654,7 @@ function parseSteps(text) {
     lines.forEach(line => {
         const [key, value] = line.split(":").map(s => s.trim());
 
-        // Normalize keys to dictionary-friendly names
+        // normalize keys to dictionary-friendly names
         switch (key) {
             case "Input letter":
                 result.input = value;
@@ -1374,7 +1368,7 @@ rotor1Section.append("rect")
 
 rotor1Section.append("text")
     .attr("class", "section-title")
-    .attr("x", rotor1Component.width/2) // Center of the rectangle (500/2)
+    .attr("x", rotor1Component.width/2)
     .attr("y", 20)
     .attr("text-anchor", "middle")
     .attr("font-size", "18px")
@@ -1435,7 +1429,7 @@ rotor2Section.append("rect")
 
 rotor2Section.append("text")
     .attr("class", "section-title")
-    .attr("x", rotor2Component.width/2) // Center of the rectangle (500/2)
+    .attr("x", rotor2Component.width/2) 
     .attr("y", 20)
     .attr("text-anchor", "middle")
     .attr("font-size", "18px")
@@ -1496,7 +1490,7 @@ rotor3Section.append("rect")
 
 rotor3Section.append("text")
     .attr("class", "section-title")
-    .attr("x", rotor3Component.width/2) // Center of the rectangle (500/2)
+    .attr("x", rotor3Component.width/2) 
     .attr("y", 20)
     .attr("text-anchor", "middle")
     .attr("font-size", "18px")
@@ -1558,7 +1552,7 @@ reflectorSection.append("rect")
 
 reflectorSection.append("text")
     .attr("class", "section-title")
-    .attr("x", reflectorComponent.width/2) // Center of the rectangle (500/2)
+    .attr("x", reflectorComponent.width/2) 
     .attr("y", 20)
     .attr("text-anchor", "middle")
     .attr("font-size", "18px")
@@ -1614,7 +1608,7 @@ const keyboardSection = svg.append("g")
     .attr("class", "keyboard-section")
     .attr("transform", "translate("+ kb.x+", "+kb.y +")");
 
-// Add rectangle box around the keyboard
+
 keyboardSection.append("rect")
     .attr("class", "section-box")
     .attr("width", keyboardWidth)
@@ -1627,7 +1621,7 @@ keyboardSection.append("rect")
 
 keyboardSection.append("text")
     .attr("class", "section-title")
-    .attr("x", keyboardWidth/2) // Center of the rectangle (500/2)
+    .attr("x", keyboardWidth/2) 
     .attr("y", 25)
     .attr("text-anchor", "middle")
     .attr("font-size", "18px")
@@ -1663,7 +1657,7 @@ row1Letters.forEach((letter, i) => {
                     .attr("stroke", "#000")
                     .attr("stroke-width", 2);
                 
-    // Key letter
+    
     key.append("text")
         .attr("x", keySize/2)
         .attr("y", keySize/2 + 5)
@@ -1695,7 +1689,7 @@ row2Letters.forEach((letter, i) => {
                     .attr("stroke", "#000")
                     .attr("stroke-width", 2);
                 
-    // Key letter
+    
     key.append("text")
         .attr("x", keySize/2)
         .attr("y", keySize/2 + 5)
@@ -1727,7 +1721,7 @@ row3Letters.forEach((letter, i) => {
                     .attr("stroke", "#000")
                     .attr("stroke-width", 2);
                 
-    // Key letter
+    
     key.append("text")
         .attr("x", keySize/2)
         .attr("y", keySize/2 + 5)
@@ -1758,7 +1752,7 @@ lampboardSection.append("rect")
 
 lampboardSection.append("text")
     .attr("class", "section-title")
-    .attr("x", lampboardWidth/2) // Center of the rectangle (500/2)
+    .attr("x", lampboardWidth/2) 
     .attr("y", 25)
     .attr("text-anchor", "middle")
     .attr("font-size", "18px")
@@ -1790,7 +1784,7 @@ row1Letters.forEach((letter, i) => {
                     .attr("stroke", "#000")
                     .attr("stroke-width", 2);
                 
-    // Key letter
+    
     key.append("text")
         .attr("x", keySize/2)
         .attr("y", keySize/2 + 5)
@@ -1822,7 +1816,7 @@ row2Letters.forEach((letter, i) => {
                     .attr("stroke", "#000")
                     .attr("stroke-width", 2);
                 
-    // Key letter
+    
     key.append("text")
         .attr("x", keySize/2)
         .attr("y", keySize/2 + 5)
@@ -1854,7 +1848,7 @@ row3Letters.forEach((letter, i) => {
                     .attr("stroke", "#000")
                     .attr("stroke-width", 2);
                 
-    // Key letter
+    
     lamp.append("text")
         .attr("x", keySize/2)
         .attr("y", keySize/2 + 5)
@@ -1882,7 +1876,7 @@ plugboardSection.append("rect")
 
 plugboardSection.append("text")
     .attr("class", "section-title")
-    .attr("x", plugboard.width/2) // Center of the rectangle (500/2)
+    .attr("x", plugboard.width/2) 
     .attr("y", 25)
     .attr("text-anchor", "middle")
     .attr("font-size", "18px")
