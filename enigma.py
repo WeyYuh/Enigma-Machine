@@ -115,8 +115,7 @@ class Enigma:
             print(f"Input letter: {char.upper()}")
             print(f"Rotors position: {ALPHABET[self.left.pos]}{ALPHABET[self.mid.pos]}{ALPHABET[self.right.pos]}")
 
-        self.encrypt_steps += f"Input letter: {char.upper()}\n \
-                Rotor position: {ALPHABET[self.left.pos]}{ALPHABET[self.mid.pos]}{ALPHABET[self.right.pos]}\n"
+        self.encrypt_steps += f"Input letter: {char.upper()}\nRotor position: {ALPHABET[self.left.pos]}{ALPHABET[self.mid.pos]}{ALPHABET[self.right.pos]}\n"
 
         plug_in = self.plugboard.swap(char.upper())
         idx = ALPHABET.index(plug_in)

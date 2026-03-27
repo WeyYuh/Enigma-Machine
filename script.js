@@ -459,6 +459,7 @@ document.getElementById("clear-btn").addEventListener("click", () => {
 const stepsBtn = document.getElementById("steps-btn");
 const stepsSection = document.getElementById("steps-section");
 stepsBtn.addEventListener("click", () => {
+    console.log("button clicked")
     if (stepsBtn.innerText === "Show steps") {
         stepsBtn.innerText = "Hide steps";
         stepsSection.style.display = "block";
@@ -529,7 +530,8 @@ const keys = document.querySelectorAll(".key");
 keys.forEach(key => {
     key.addEventListener('click', async () => {
         const letter = key.textContent;
-        document.getElementById("input").textContent += letter;
+        setInputText(letter);
+        // document.getElementById("input").textContent += letter;
 
 
 
@@ -540,7 +542,7 @@ keys.forEach(key => {
 
 
         const encrypted = await sendToEnigmaPy(letter, rotor1Pos, rotor2Pos, rotor3Pos, rotor1Option, rotor2Option, rotor3Option, rotor1Notch, rotor2Notch, rotor3Notch, reflectorOption);
-        document.getElementById("output").textContent += encrypted;
+        setOutputText(encrypted);
 
         lightOnOffAnim(encrypted.toLowerCase());
     });
@@ -549,7 +551,8 @@ keys.forEach(key => {
 document.addEventListener("keydown", async function (e) {
     if (e.key.length === 1 && e.key.match(/[a-zA-Z]/)) {
         const letter = e.key.toUpperCase();
-        document.getElementById("input").textContent += letter;
+        setInputText(letter);
+        // document.getElementById("input").textContent += letter;
 
         var rotor1Pos = getRotorPosition(1);
         var rotor2Pos = getRotorPosition(2);
@@ -557,7 +560,7 @@ document.addEventListener("keydown", async function (e) {
 
         const encrypted = await sendToEnigmaPy(letter, rotor1Pos, rotor2Pos, rotor3Pos, rotor1Option, rotor2Option, rotor3Option, rotor1Notch, rotor2Notch, rotor3Notch, reflectorOption);
 
-        document.getElementById("output").textContent += encrypted;
+        setOutputText(encrypted);
         
         lightOnOffAnim(encrypted.toLowerCase());
     }
@@ -614,9 +617,11 @@ async function sendToEnigmaPy(letter, rotor1Position, rotor2Position, rotor3Posi
     let stepText = document.createElement("p");
     stepText.id = "step-"+count+"-text";
     stepText.innerHTML = count + ". " + formatted;
+    console.log(formatted)
     
     let stepButton = document.createElement("button");
     stepButton.id = "step-"+count+"-button";
+    stepButton.className = "step-btn"
     stepButton.innerHTML = "Show encryption path for "+count+".";
 
     stepButton.addEventListener("click", () => {
@@ -1924,3 +1929,19 @@ letters.forEach((letter, i) => {
         .text(letter);
 });
 
+function addSpaceEveryNChars(str, n = 5) {
+    str = str.replace(/\s/g, '');;
+    return str.replace(new RegExp(`(.{${n}})`, 'g'), '$1 ').trim();
+}
+
+function setInputText(text) {
+    inputBox = document.getElementById("input");
+    new_str = inputBox.textContent + text;
+    inputBox.textContent = addSpaceEveryNChars(new_str, 5);
+}
+
+function setOutputText(text) {
+    outputBox = document.getElementById("output");
+    new_str = outputBox.textContent + text;
+    outputBox.textContent = addSpaceEveryNChars(new_str, 5);
+}

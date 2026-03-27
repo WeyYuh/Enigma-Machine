@@ -8,6 +8,9 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="manual-btn-container">
+        <a href="manual.html" id="manual-link" class="manual-btn">📖 Manual</a>
+    </div>
 
 
     <div class="keyboard">
@@ -147,13 +150,13 @@
     </div>
 
     <div class="content">
-        <button type="button" id="clear-btn">Clear</button>
-        <button type="button" id="steps-btn">Show steps</button>
+        <button type="button" class="control-button" id="clear-btn">Clear</button>
+        <button type="button" class="control-button" id="steps-btn">Show steps</button>
     </div>
 
     <div id="steps-section" style="display: none;">
         <h2>Encryption steps</h2>
-        <p id="steps">Encryption steps will appear here...</p>
+        <p class="hint-text" id="steps">Encryption steps will appear here...</p>
         <div id="viz" style="display: none"></div>
     </div>
     
